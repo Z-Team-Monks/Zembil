@@ -1,15 +1,34 @@
 {
   "version": 2,
-  "dgSpecHash": "lnJRkdWOZ/ha5lltsFRwpB2mfwjjlI72cYvnMAGPWBVuF/vduv24BvVOmpOUicJx/u5JZSpf+w9ik6K0GTrl7g==",
+  "dgSpecHash": "zXeQWsNJ3Yf1HUswWoBfcccAQ9wS1kTUnJ4AbQaaR/aj+ONIIgELusQDaRgG3kcnYfAEeHsUHgVS2FRT4fhVYQ==",
   "success": true,
   "projectFilePath": "/home/niko/Documents/code/3rd yr/dotnet/OOP_Project/Zembil/Zembil.csproj",
   "expectedPackageFiles": [
+    "/home/niko/.nuget/packages/microsoft.entityframeworkcore/6.0.0-preview.3.21201.2/microsoft.entityframeworkcore.6.0.0-preview.3.21201.2.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.entityframeworkcore.abstractions/6.0.0-preview.3.21201.2/microsoft.entityframeworkcore.abstractions.6.0.0-preview.3.21201.2.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.entityframeworkcore.analyzers/6.0.0-preview.3.21201.2/microsoft.entityframeworkcore.analyzers.6.0.0-preview.3.21201.2.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.entityframeworkcore.relational/6.0.0-preview.3.21201.2/microsoft.entityframeworkcore.relational.6.0.0-preview.3.21201.2.nupkg.sha512",
     "/home/niko/.nuget/packages/microsoft.extensions.apidescription.server/3.0.0/microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.caching.abstractions/6.0.0-preview.3.21201.4/microsoft.extensions.caching.abstractions.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.caching.memory/6.0.0-preview.3.21201.4/microsoft.extensions.caching.memory.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.configuration.abstractions/6.0.0-preview.3.21201.4/microsoft.extensions.configuration.abstractions.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.dependencyinjection/6.0.0-preview.3.21201.4/microsoft.extensions.dependencyinjection.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/6.0.0-preview.3.21201.4/microsoft.extensions.dependencyinjection.abstractions.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.logging/6.0.0-preview.3.21201.4/microsoft.extensions.logging.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.logging.abstractions/6.0.0-preview.3.21201.4/microsoft.extensions.logging.abstractions.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.options/6.0.0-preview.3.21201.4/microsoft.extensions.options.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/microsoft.extensions.primitives/6.0.0-preview.3.21201.4/microsoft.extensions.primitives.6.0.0-preview.3.21201.4.nupkg.sha512",
     "/home/niko/.nuget/packages/microsoft.openapi/1.2.3/microsoft.openapi.1.2.3.nupkg.sha512",
+    "/home/niko/.nuget/packages/npgsql/6.0.0-preview3/npgsql.6.0.0-preview3.nupkg.sha512",
+    "/home/niko/.nuget/packages/npgsql.entityframeworkcore.postgresql/6.0.0-preview3/npgsql.entityframeworkcore.postgresql.6.0.0-preview3.nupkg.sha512",
     "/home/niko/.nuget/packages/swashbuckle.aspnetcore/5.6.3/swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
     "/home/niko/.nuget/packages/swashbuckle.aspnetcore.swagger/5.6.3/swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
     "/home/niko/.nuget/packages/swashbuckle.aspnetcore.swaggergen/5.6.3/swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",
-    "/home/niko/.nuget/packages/swashbuckle.aspnetcore.swaggerui/5.6.3/swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512"
+    "/home/niko/.nuget/packages/swashbuckle.aspnetcore.swaggerui/5.6.3/swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512",
+    "/home/niko/.nuget/packages/system.collections.immutable/6.0.0-preview.3.21201.4/system.collections.immutable.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/system.componentmodel.annotations/6.0.0-preview.3.21201.4/system.componentmodel.annotations.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/system.diagnostics.diagnosticsource/6.0.0-preview.3.21201.4/system.diagnostics.diagnosticsource.6.0.0-preview.3.21201.4.nupkg.sha512",
+    "/home/niko/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0-preview.3.21201.4/system.runtime.compilerservices.unsafe.6.0.0-preview.3.21201.4.nupkg.sha512"
   ],
   "logs": []
 }
