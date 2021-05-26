@@ -16,7 +16,13 @@ namespace Zembil.Repositories
         {
 
         }
+        public async Task<int> GetLikes(int shopId)
+        {
+            var likes = await _databaseContext.Set<ShopLike>().ToListAsync();
+            likes = likes.Where(l => l.ShopId == shopId).ToList();
+            return likes.Count();
 
+        }
         public async Task LikeShop(ShopLike shoplike)
         {
             _databaseContext.Set<ShopLike>().Add(shoplike);
