@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Zembil.Models;
@@ -47,6 +48,47 @@ namespace Zembil.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<Shop>> DeleteShop(int id)
+        {
+            var result = await _repository.ShopRepo.Delete(id);
+            return NoContent();
+        }
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult<Shop>> UpdateShop(int id, [FromBody] JsonPatchDocument<Shop> Shop)
+        {
+
+            var ShopExist = await _repository.ShopRepo.Get(id);
+
+            if (ShopExist == null)
+            {
+                return NotFound("No Shop found with that id!");
+            }
+            else
+            {
+                Shop.ApplyTo(ShopExist, ModelState);
+            }
+            await _repository.ShopRepo.Update(ShopExist);
+            return Ok(ShopExist);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] Shop Shop)
+        {
+
+            var ShopExist = await _repository.ShopRepo.Get(id);
+
+            if (ShopExist == null)
+            {
+                return NotFound("No Shop found with that id!");
+            }
+            Shop.ShopId = id;
+            await _repository.ShopRepo.Update(Shop);
+            return Ok(Shop);
         }
 
         [HttpPost]
