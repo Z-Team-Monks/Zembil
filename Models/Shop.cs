@@ -10,6 +10,7 @@ namespace Zembil.Models
     public class Shop
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShopId { get; set; }
 
         [MaxLength(150)]

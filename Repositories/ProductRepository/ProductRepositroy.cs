@@ -48,7 +48,7 @@ namespace Zembil.Repositories
                 Pagination = 1;
             }
 
-            if (Name != null && Name.Length > 0)
+            if (!string.IsNullOrEmpty(Name))
             {
                 products = products.Where(x => x.Name.Equals(Name)).ToList();
             }
@@ -65,7 +65,7 @@ namespace Zembil.Repositories
             {
                 products = products.GetRange(0, Limit);
             }
-            if (Sort != null && Sort.Length > 0)
+            if (!string.IsNullOrEmpty(Sort))
             {
                 if (Sort.ToLower().Equals("price"))
                 {
@@ -75,6 +75,27 @@ namespace Zembil.Repositories
                 {
                     products.Sort(delegate (Product p1, Product p2) { return p1.Name.CompareTo(p2.Name); });
                 }
+            }
+
+            return products;
+        }
+
+        public async Task<List<Product>> SearchProducts(QueryParams queryParams)
+        {
+            List<Product> products = await _databaseContext.Set<Product>().ToListAsync();
+            int TotalProductsCount = products.Count();
+            Console.WriteLine($"total: {TotalProductsCount}");
+            string Name = queryParams.Name;
+            string Category = queryParams.Category;
+
+            if (!string.IsNullOrEmpty(Name))
+            {
+                products = products.Where(p => p.Name.ToLower().Contains(Name.ToLower())).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(Category))
+            {
+                products = products.Where(p => p.Category.ToLower().Equals(Category.ToLower())).ToList();
             }
 
             return products;

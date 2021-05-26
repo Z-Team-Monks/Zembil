@@ -4,16 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zembil.Models
 {
-    public enum ProductCategory
-    {
-        laptop = 0,
-        mobile,
-    }
-    public enum ProductCondition
-    {
-        newProduct = 0,
-        usedProduct,
-    }
     [Table("products")]
     public class Product
     {
@@ -30,7 +20,7 @@ namespace Zembil.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "0:yyy-MM-dd", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
-        
+
         //Why is this here?
         [Display(Name = "Builing Name")]
         public string BuilingName { get; set; }
