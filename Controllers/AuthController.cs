@@ -15,7 +15,7 @@ namespace Zembil.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost("auth")]
+        [HttpPost]
         public async Task<IActionResult> Authenticate([FromBody] UserCred userCred)
         {
             var token = await _accountService.Authenticate(userCred.Username, userCred.Password);
