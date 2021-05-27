@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zembil.Models
 {
-    [Table("WishList")]
+    [Table("wishList")]
     public class WishListItem
     {
         [Key]

@@ -4,12 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zembil.Models
 {
-    public enum UserRole : int
-    {
-        admin = 1
-
-    }
-
     [Table("users")]
     public class User
     {
@@ -30,7 +24,7 @@ namespace Zembil.Models
         public string Password { get; set; }
 
         [Required]
-        public UserRole Role { get; set; }
+        public string Role { get; set; }
 
         public string Phone { get; set; }
 
