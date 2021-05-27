@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zembil.Models
 {
+    [Table("review")]
     public class Review
     {
         [Required]

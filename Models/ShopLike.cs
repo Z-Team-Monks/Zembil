@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Zembil.Models
 {
-    [Table("ShopLike")]
+    [Table("shopLike")]
     public class ShopLike
     {
         [Key]
