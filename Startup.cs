@@ -83,12 +83,16 @@ namespace Zembil
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
+<<<<<<< HEAD
                 app.UseSwaggerUI( c=> {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zembil v1");
                     c.DocumentTitle = "Zembil API";
                     c.DocExpansion(DocExpansion.None);
                 });
                 
+=======
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zembil v1"));
+>>>>>>> 0b1dbc6c92875e2091da242a368b0c453fbd51d0
             }
 
             app.UseHttpsRedirection();

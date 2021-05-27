@@ -23,7 +23,11 @@ namespace Zembil.Controllers
             if (token == null)
                 return NotFound();
 
-            return Ok(token);
+            var authDto = new AuthDto
+            {
+                token = token
+            };
+            return Ok(authDto);
         }
 
     }

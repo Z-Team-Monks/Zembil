@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Zembil.DbContexts;
+//using Zembil.Repositories.WishListRepository;
 
 namespace Zembil.Repositories
 {
@@ -9,7 +10,7 @@ namespace Zembil.Repositories
         private IUserRepository _userRepository;
         private IProductRepository _productRepository;
         private IShopRepository _shopRepository;
-        private ICategoryRepository _categoryRepository;
+        private IWishListRepository _wishListRepository;
 
         public WrapperRepository(ZembilContext context)
         {
@@ -50,17 +51,18 @@ namespace Zembil.Repositories
             }
         }
 
-        public ICategoryRepository CategoryRepo
+        public IWishListRepository WishListRepo
         {
             get
             {
-                if (_categoryRepository == null)
+                if (_wishListRepository == null)
                 {
-                    _categoryRepository = new CategoryRepository(_dbContext);
+                    _wishListRepository = new WishListRepository(_dbContext);
                 }
-                return _categoryRepository;
+                return _wishListRepository;
             }
         }
+
 
         public async Task SaveAsync()
         {
