@@ -8,6 +8,7 @@ namespace Zembil.Repositories
         IUserRepository UserRepo { get; }
         IProductRepository ProductRepo { get; }
         IShopRepository ShopRepo { get; }
+        IWishListRepository WishListRepo { get; }
         Task SaveAsync();
     }
 }
