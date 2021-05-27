@@ -11,6 +11,7 @@ namespace Zembil.Repositories
         private IProductRepository _productRepository;
         private IShopRepository _shopRepository;
         private IWishListRepository _wishListRepository;
+        private IReviewRepository _reviewRepository;
         private ICategoryRepository _categoryRepository;
 
         public WrapperRepository(ZembilContext context)
@@ -72,6 +73,18 @@ namespace Zembil.Repositories
                     _categoryRepository = new CategoryRepository(_dbContext);
                 }
                 return _categoryRepository;
+            }
+        }
+
+        public IReviewRepository ReviewRepo
+        {
+            get
+            {
+                if (_reviewRepository == null)
+                {
+                    _reviewRepository = new ReviewRepository(_dbContext);
+                }
+                return _reviewRepository;
             }
         }
 

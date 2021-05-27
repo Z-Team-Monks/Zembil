@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 
 namespace Zembil.Views
 {
-    public class ReviewToReturnDto
-    {
-        public int ReviewId { get; set; }
-        public int UserId { get; set; }        
-        public int ProductId { get; set; }
-        public string UserName { get; set; }
+    public class ReviewToUpdateDto
+    {        
         public int Rating { get; set; }
         public string ReviewString { get; set; }
+        public DateTime ReviewDate { get; set; }
+
     }
 }

@@ -7,8 +7,9 @@ namespace Zembil.Repositories
 {
     public interface IProductRepository : IRepositoryBase<Product>
     {
-        Task<Review> AddReview(Review review);
-        public IEnumerable<Review> GetReviewes(int productId);
+        //Task<Review> AddReview(Review review);
+        //IEnumerable<Review> GetReviewes(int productId);
+        //void DeleteAReview(int reviewId);
         Task<List<Product>> FilterProducts(QueryParams queryParams);
         Task<List<Product>> SearchProducts(QueryParams queryParams);
     }
