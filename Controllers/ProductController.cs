@@ -62,9 +62,9 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product)
         {
             string authHeader = Request.Headers["Authorization"];
-            int userId = _accountService.Decrypt(authHeader);
+            int userId = _accountServices.Decrypt(authHeader);
 
-            var isOwner = await _repository.ShopRepo.Get(userId);
+            var isOwner = await _repoProduct.ShopRepo.Get(userId);
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
 
             if (shopExists == null)

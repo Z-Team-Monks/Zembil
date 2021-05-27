@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Zembil.Services;
 using System;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Collections.Generic;
 
 namespace Zembil
 {
@@ -38,18 +40,23 @@ namespace Zembil
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zembil", Version = "v1" });
-                 var security = new Dictionary<string, IEnumerable<string>>
-                {
-                    {"Bearer", new string[] { }},
-                };
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey"
+                c.AddSecurityDefinition("Bearer", //Name the security scheme
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme.",
+                        Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
+                        Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+                    {
+                        new OpenApiSecurityScheme{
+                            Reference = new OpenApiReference{
+                                Id = "Bearer", //The name of the previously defined security scheme.
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },new List<string>()
+                    }
                 });
-                c.AddSecurityRequirement(security);
             });
 
             var tokenKey = Configuration.GetValue<string>("TokenKey");
@@ -83,16 +90,13 @@ namespace Zembil
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-<<<<<<< HEAD
-                app.UseSwaggerUI( c=> {
+                app.UseSwaggerUI(c =>
+                {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zembil v1");
                     c.DocumentTitle = "Zembil API";
                     c.DocExpansion(DocExpansion.None);
                 });
-                
-=======
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zembil v1"));
->>>>>>> 0b1dbc6c92875e2091da242a368b0c453fbd51d0
+
             }
 
             app.UseHttpsRedirection();

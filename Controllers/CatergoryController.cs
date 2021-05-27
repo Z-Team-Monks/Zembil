@@ -37,7 +37,7 @@ namespace Zembil.Controllers
             return Categories;
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<Category> AddCategory(Category Category)
         {
