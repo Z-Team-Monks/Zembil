@@ -17,7 +17,7 @@ namespace Zembil.Profiles
                     dest => dest.ReviewDate,
                     opt => opt.MapFrom(src => DateTime.Now));
             CreateMap<Models.Review, Views.ReviewToReturnDto>();
-
+            CreateMap<Views.ReviewToUpdateDto, Models.Review>();
             CreateMap<Models.User, Views.UserGetDto>();
 
         }

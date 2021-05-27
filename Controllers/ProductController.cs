@@ -18,10 +18,10 @@ namespace Zembil.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IRepositoryWrapper _repoProduct { get; set; }
+        private IRepositoryWrapper _repoProduct;
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
-
+        
         public ProductsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper)
         {
             _repoProduct = repoWrapper;
@@ -61,20 +61,27 @@ namespace Zembil.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product)
         {
+
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
-            if (shopExists == null)
-            {
-                return NotFound("Shop doesn't exist");
-            }
+            if (shopExists == null) return NotFound("Shop doesn't exist");            
+
+            var user = await getUserFromHeader(Request.Headers["Authorization"]);
+            if (user == null) return Unauthorized();
+
+            var shop = await _repoProduct.ShopRepo.Get(product.ShopId);
+            if(shop.OwnerId != user.Id) return Unauthorized();  //Not your shop 
 
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
             return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.Id }, NewProduct);
         }
 
+        
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] JsonPatchDocument<Product> product)
         {
+            var user = await getUserFromHeader(Request.Headers["Authorization"]);
+            if (user == null) return Unauthorized();
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
 
@@ -82,11 +89,14 @@ namespace Zembil.Controllers
             {
                 return NotFound("No product found with that id!");
             }
-            else
-            {
-                product.ApplyTo(productExist, ModelState);
-            }
-            Console.WriteLine("Price:" + productExist.Price);
+
+            var shopExists = await _repoProduct.ShopRepo.Get(productExist.ShopId);
+            if (shopExists == null) return NotFound("Shop doesn't exist");
+           
+            var shop = await _repoProduct.ShopRepo.Get(productExist.ShopId);
+            if (shop.OwnerId != user.Id) return Unauthorized();  //Not your shop
+
+            product.ApplyTo(productExist, ModelState);                        
             await _repoProduct.ProductRepo.Update(productExist);
             return Ok(productExist);
         }
@@ -106,48 +116,89 @@ namespace Zembil.Controllers
             return Ok(product);
         }
 
-        [HttpPost("{id}/Reviews")]
+        [HttpPost("{id}/reviewes")]
         public async Task<ActionResult<Review>> AddReview(int id, ReviewDto review)
         {
             var productExist = await _repoProduct.ProductRepo.Get(id);
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountServices.Decrypt(authHeader);
-            var userExists = await _repoProduct.UserRepo.Get(tokenid);
+            var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
 
             if (productExist == null) return NotFound("No product found with that id!");
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            review.UserId = tokenid;
+            review.UserId = userExists.Id;
             review.ProductId = id;
 
             var reviewForRepo = _mapper.Map<Review>(review);
-            await _repoProduct.ProductRepo.AddReview(reviewForRepo);
+            await _repoProduct.ReviewRepo.Add(reviewForRepo);
             return Ok(review);
         }
 
-        [AllowAnonymous]
-        [HttpGet("{id}/Reviews")]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviewesOfAProduct(int id)
+        //[AllowAnonymous]
+        //[HttpGet("{id}/reviewes")]
+        //public async Task<ActionResult<IEnumerable<Review>>> GetReviewesOfAProduct(int id)
+        //{
+        //    var productExist = await _repoProduct.ProductRepo.Get(id);
+        //    if (productExist == null) return NotFound("No product found with that id!");
+
+        //    var reviewesFromRepo = _repoProduct.ReviewRepo.GetReviewes(id);
+        //    var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
+
+        //    foreach (var review in reviewesToReturn)
+        //    {
+        //        var userFromRepo = await _repoProduct.UserRepo.Get(review.UserId);
+        //        review.UserName = userFromRepo.Username;
+        //    }
+        //    return Ok(reviewesToReturn);
+        //}
+
+        //[HttpPut("{id}/reviewes/{reviewId}")]
+        //public async Task<ActionResult> UpdateReview(int reviewId, [FromBody] Review review)
+        //{
+        //    var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
+        //    if (userExists == null) return NotFound("User doesn't Exist");
+
+        //    var reviewExists = await _repoProduct.ReviewRepo.Get(review.ReviewId);
+        //    if (reviewExists == null)
+        //    {
+        //        return NotFound("No Review found with that id!");
+        //    }
+
+        //    if (reviewExists.UserId != userExists.Id)
+        //    {
+        //        return Unauthorized("Not your review");
+        //    }
+
+        //    review.ReviewId = reviewId;
+        //    await _repoProduct.ReviewRepo.Update(review);
+        //    return Ok(review);
+        //}
+
+        //[HttpDelete("{id}/reviewes/{reviewId}")]
+        //public async Task<ActionResult> DeleteAReview(int reviewId)//reviewid
+        //{
+        //    var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
+        //    if (userExists == null) return NotFound("User doesn't Exist");
+
+        //    var reviewExists = await _repoProduct.ReviewRepo.Get(reviewId);
+        //    if (reviewExists == null)
+        //    {
+        //        return NotFound("No Review found with that id!");
+        //    }
+
+        //    if (reviewExists.UserId != userExists.Id)
+        //    {
+        //        return Unauthorized("Not your review");
+        //    }
+        //    await _repoProduct.ReviewRepo.Delete(reviewId);
+        //    return Ok();
+        //}
+
+        private async Task<User> getUserFromHeader(string authHeader)
         {
-            var productExist = await _repoProduct.ProductRepo.Get(id);
-            //string authHeader = Request.Headers["Authorization"];
-            //int tokenid = _accountServices.Decrypt(authHeader);
-            //var userExists = await _repoProduct.UserRepo.Get(tokenid);
-
-            if (productExist == null) return NotFound("No product found with that id!");
-            //if (userExists == null) return NotFound("User doesn't Exist");
-
-            var reviewesFromRepo = _repoProduct.ProductRepo.GetReviewes(id);
-
-            var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
-
-            foreach (var review in reviewesToReturn)
-            {
-                var userFromRepo = await _repoProduct.UserRepo.Get(review.UserId);
-                review.UserName = userFromRepo.Username;
-            }
-
-            return Ok(reviewesToReturn);
+            int tokenid = _accountServices.Decrypt(authHeader);
+            var userExists = await _repoProduct.UserRepo.Get(tokenid);
+            return userExists;
         }
+
     }
 }

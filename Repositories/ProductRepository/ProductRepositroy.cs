@@ -16,12 +16,17 @@ namespace Zembil.Repositories
 
         }
 
-        public async Task<Review> AddReview(Review review)
-        {
-            _databaseContext.Set<Review>().Add(review);
-            await _databaseContext.SaveChangesAsync();
-            return review;
-        }
+        //public async Task<Review> AddReview(Review review)
+        //{
+        //    _databaseContext.Set<Review>().Add(review);
+        //    await _databaseContext.SaveChangesAsync();
+        //    return review;
+        //}
+
+        //public async Task<Review> DeleteReview(Review review)
+        //{
+        //    _databaseContext.Set<Review>().Remove
+        //}
 
         public IEnumerable<Review> GetReviewes(int productId)
         {
