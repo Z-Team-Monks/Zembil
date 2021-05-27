@@ -7,6 +7,8 @@ namespace Zembil.Utils
         public int Limit { get; set; }
         public string Sort { get; set; }
         public int Pagination { get; set; }
+        public string Category { get; set; }
+        public string BuildingName { get; set; }
 
     }
 

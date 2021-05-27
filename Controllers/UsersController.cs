@@ -88,27 +88,5 @@ namespace Zembil.Controllers
             return NoContent();
         }
 
-        [HttpGet("likes/{shopId}")]
-        [HttpPost("likes/{shopId}")]
-        [HttpDelete("likes/{shopId}")]
-        public async Task<IActionResult> LikeAShop(int shopId)
-        {
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountService.Decrypt(authHeader);
-
-            var userExists = await _repoUser.UserRepo.Get(tokenid);
-
-            if (userExists == null) return NotFound("User doesn't Exist");
-
-            var shopExists = await _repoUser.ShopRepo.Get(shopId);
-
-            if (userExists == null) return NotFound("Shop doesn't Exist");
-
-            //TODO: like implementation in the repo
-            //await _repoUser.ShopRepo.Like();
-
-            return Ok();
-        }
-
     }
 }

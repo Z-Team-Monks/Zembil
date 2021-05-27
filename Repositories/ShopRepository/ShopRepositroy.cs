@@ -16,7 +16,13 @@ namespace Zembil.Repositories
         {
 
         }
+        public async Task<int> GetLikes(int shopId)
+        {
+            var likes = await _databaseContext.Set<ShopLike>().ToListAsync();
+            likes = likes.Where(l => l.ShopId == shopId).ToList();
+            return likes.Count();
 
+        }
         public async Task LikeShop(ShopLike shoplike)
         {
             _databaseContext.Set<ShopLike>().Add(shoplike);
@@ -70,7 +76,7 @@ namespace Zembil.Repositories
             {
                 shops = shops.GetRange(0, Limit);
             }
-            if (Sort != null && Sort.Length > 0)
+            if (!string.IsNullOrEmpty(Sort))
             {
                 if (Sort.ToLower().Equals("name"))
                 {
@@ -79,6 +85,21 @@ namespace Zembil.Repositories
             }
 
             return shops;
+        }
+
+        public async Task<List<Shop>> SearchShops(QueryParams queryParams)
+        {
+            List<Shop> Shops = await _databaseContext.Set<Shop>().ToListAsync();
+            int TotalShopsCount = Shops.Count();
+            Console.WriteLine($"total: {TotalShopsCount}");
+            string Building = queryParams.BuildingName;
+
+            if (!string.IsNullOrEmpty(Building))
+            {
+                Shops = Shops.Where(p => p.BuildingName.ToLower().Contains(Building.ToLower())).ToList();
+            }
+
+            return Shops;
         }
     }
 }

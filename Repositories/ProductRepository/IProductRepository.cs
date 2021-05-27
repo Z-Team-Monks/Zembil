@@ -10,6 +10,6 @@ namespace Zembil.Repositories
         Task<Review> AddReview(Review review);
         public IEnumerable<Review> GetReviewes(int productId);
         Task<List<Product>> FilterProducts(QueryParams queryParams);
-
+        Task<List<Product>> SearchProducts(QueryParams queryParams);
     }
 }

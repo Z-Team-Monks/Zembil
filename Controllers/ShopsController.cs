@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Zembil.Models;
@@ -49,6 +50,47 @@ namespace Zembil.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<Shop>> DeleteShop(int id)
+        {
+            var result = await _repository.ShopRepo.Delete(id);
+            return NoContent();
+        }
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult<Shop>> UpdateShop(int id, [FromBody] JsonPatchDocument<Shop> Shop)
+        {
+
+            var ShopExist = await _repository.ShopRepo.Get(id);
+
+            if (ShopExist == null)
+            {
+                return NotFound("No Shop found with that id!");
+            }
+            else
+            {
+                Shop.ApplyTo(ShopExist, ModelState);
+            }
+            await _repository.ShopRepo.Update(ShopExist);
+            return Ok(ShopExist);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] Shop Shop)
+        {
+
+            var ShopExist = await _repository.ShopRepo.Get(id);
+
+            if (ShopExist == null)
+            {
+                return NotFound("No Shop found with that id!");
+            }
+            Shop.ShopId = id;
+            await _repository.ShopRepo.Update(Shop);
+            return Ok(Shop);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Shop>> CreateShop(Shop shop)
         {
@@ -72,8 +114,18 @@ namespace Zembil.Controllers
             }
         }
 
+        [HttpGet("{shopId:int}/likes")]
+        public async Task<ActionResult> GetLikes(int shopId)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            int tokenid = _accountService.Decrypt(authHeader);
 
-        [HttpPost("{shopId:int}/Likes")]
+            var userExists = await _repository.UserRepo.Get(tokenid);
+
+            var count = await _repository.ShopRepo.GetLikes(shopId);
+            return Ok($"shop likes: {count}");
+        }
+        [HttpPost("{shopId:int}/likes")]
         public async Task<ActionResult> LikeShop(int shopId)
         {
             string authHeader = Request.Headers["Authorization"];
@@ -81,11 +133,9 @@ namespace Zembil.Controllers
 
             var userExists = await _repository.UserRepo.Get(tokenid);
             var likeExists = _repository.ShopRepo.LikeExists(userExists.Id, shopId);
-            if (!likeExists) return BadRequest("Can't retract shop not liked before");
-
-
 
             if (userExists == null) return NotFound("User doesn't Exist");
+            if (likeExists) return BadRequest("Shop already liked by this user");
 
             ShopLike shoplike = new ShopLike
             {
@@ -97,7 +147,7 @@ namespace Zembil.Controllers
             return Ok();
         }
 
-        [HttpDelete("{shopId:int}/Likes")]
+        [HttpDelete("{shopId:int}/likes")]
         public async Task<ActionResult> RetractLike(int shopId)
         {
             string authHeader = Request.Headers["Authorization"];

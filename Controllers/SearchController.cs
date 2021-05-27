@@ -13,7 +13,7 @@ using Zembil.Views;
 namespace Zembil.Controllers
 {
     [Authorize]
-    [Route("api/search")]
+    [Route("api/v1/search")]
     [ApiController]
     public class SearchController : ControllerBase
     {
@@ -28,8 +28,9 @@ namespace Zembil.Controllers
             _mapper = mapper;
         }
 
-        [Route("products")]
+
         [AllowAnonymous]
+        [Route("products")]
         [HttpGet]
         public async Task<IEnumerable<Product>> GetProducts([FromQuery] QueryParams queryParams)
         {
@@ -40,12 +41,12 @@ namespace Zembil.Controllers
                 products = await _repoProduct.ProductRepo.GetAll();
                 return products;
             }
-            products = await _repoProduct.ProductRepo.FilterProducts(queryParams);
+            products = await _repoProduct.ProductRepo.SearchProducts(queryParams);
             return products;
         }
 
-        [Route("shops")]
         [AllowAnonymous]
+        [Route("shops")]
         [HttpGet]
         public async Task<IEnumerable<Shop>> GetShops([FromQuery] QueryParams queryParams)
         {
@@ -56,7 +57,7 @@ namespace Zembil.Controllers
                 shops = await _repoProduct.ShopRepo.GetAll();
                 return shops;
             }
-            shops = await _repoProduct.ShopRepo.FilterProducts(queryParams);
+            shops = await _repoProduct.ShopRepo.SearchShops(queryParams);
             return shops;
         }
     }

@@ -91,6 +91,21 @@ namespace Zembil.Controllers
             return Ok(productExist);
         }
 
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Product>> UpdateFullProduct(int id, [FromBody] Product product)
+        {
+
+            var productExist = await _repoProduct.ProductRepo.Get(id);
+
+            if (productExist == null)
+            {
+                return NotFound("No product found with that id!");
+            }
+            product.Id = id;
+            await _repoProduct.ProductRepo.Update(product);
+            return Ok(product);
+        }
+
         [HttpPost("{id}/Reviews")]
         public async Task<ActionResult<Review>> AddReview(int id, ReviewDto review)
         {
