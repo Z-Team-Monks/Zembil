@@ -38,6 +38,18 @@ namespace Zembil
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zembil", Version = "v1" });
+                 var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+                };
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(security);
             });
 
             var tokenKey = Configuration.GetValue<string>("TokenKey");
@@ -70,8 +82,13 @@ namespace Zembil
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zembil v1"));
+                app.UseSwagger();
+                app.UseSwaggerUI( c=> {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zembil v1");
+                    c.DocumentTitle = "Zembil API";
+                    c.DocExpansion(DocExpansion.None);
+                });
+                
             }
 
             app.UseHttpsRedirection();

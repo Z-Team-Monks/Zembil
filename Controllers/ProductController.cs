@@ -61,10 +61,18 @@ namespace Zembil.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product)
         {
+            string authHeader = Request.Headers["Authorization"];
+            int userId = _accountService.Decrypt(authHeader);
+
+            var isOwner = await _repository.ShopRepo.Get(userId);
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
+
             if (shopExists == null)
             {
                 return NotFound("Shop doesn't exist");
+            }
+            if(shopExists.OwnerId != userId){
+                return BadRequest("Not authorized to add product to this shop!");
             }
 
             var productrepo = _mapper.Map<Product>(product);
