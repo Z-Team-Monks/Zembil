@@ -14,8 +14,8 @@ using Zembil.Views;
 
 namespace Zembil.Controllers
 {
-    [Authorize]
-    [Route("api/v1/users")]
+
+    [Route("api/v1")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -29,18 +29,26 @@ namespace Zembil.Controllers
             _accountService = accountService;
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            //string authHeader = Request.Headers["Authorization"];
-            //string username = _accountService.Decrypt(authHeader);
-            //Console.WriteLine(username);
+            string authHeader = Request.Headers["Authorization"];
+            if (authHeader != null)
+            {
+                int tokenid = _accountService.Decrypt(authHeader);
+                User currentUser = await _repoUser.UserRepo.Get(tokenid);
+                if (currentUser.Role.ToLower().Equals("admin"))
+                {
+                    return await _repoUser.UserRepo.GetAll();
+                }
+            }
 
-            return await _repoUser.UserRepo.GetAll();
+            return Unauthorized("not authorized for this user");
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("users/{id}")]
         public async Task<ActionResult<UserGetDto>> GetUser(int id)
         {
             string authHeader = Request.Headers["Authorization"];
@@ -60,16 +68,37 @@ namespace Zembil.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("users")]
         public async Task<ActionResult<User>> CreateUser([FromBody] User user)
         {
             user.Password = _accountService.HashPassword(user.Password);
+            user.Role = "user";
             var NewUser = await _repoUser.UserRepo.Add(user);
             return CreatedAtAction(nameof(GetUser), new { Id = NewUser.Id }, NewUser);
         }
 
+        [HttpPost("admin")]
+        public async Task<ActionResult<User>> CreateAdmin([FromBody] User user)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            if (authHeader != null)
+            {
+                int tokenid = _accountService.Decrypt(authHeader);
+                User currentUser = await _repoUser.UserRepo.Get(tokenid);
 
-        [HttpPut("{id}")]
+                if (currentUser.Role.ToLower().Equals("admin"))
+                {
+                    user.Password = _accountService.HashPassword(user.Password);
+                    user.Role = "admin";
+                    var NewUser = await _repoUser.UserRepo.Add(user);
+                    return CreatedAtAction(nameof(GetUser), new { Id = NewUser.Id }, NewUser);
+                }
+            }
+
+            return Unauthorized("Current user can't create admin user");
+        }
+
+        [HttpPut("users/{id}")]
         public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
         {
             var userExist = await _repoUser.UserRepo.Get(user.Id);
