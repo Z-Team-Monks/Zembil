@@ -131,67 +131,7 @@ namespace Zembil.Controllers
             var reviewForRepo = _mapper.Map<Review>(review);
             await _repoProduct.ReviewRepo.Add(reviewForRepo);
             return Ok(review);
-        }
-
-        //[AllowAnonymous]
-        //[HttpGet("{id}/reviewes")]
-        //public async Task<ActionResult<IEnumerable<Review>>> GetReviewesOfAProduct(int id)
-        //{
-        //    var productExist = await _repoProduct.ProductRepo.Get(id);
-        //    if (productExist == null) return NotFound("No product found with that id!");
-
-        //    var reviewesFromRepo = _repoProduct.ReviewRepo.GetReviewes(id);
-        //    var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
-
-        //    foreach (var review in reviewesToReturn)
-        //    {
-        //        var userFromRepo = await _repoProduct.UserRepo.Get(review.UserId);
-        //        review.UserName = userFromRepo.Username;
-        //    }
-        //    return Ok(reviewesToReturn);
-        //}
-
-        //[HttpPut("{id}/reviewes/{reviewId}")]
-        //public async Task<ActionResult> UpdateReview(int reviewId, [FromBody] Review review)
-        //{
-        //    var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-        //    if (userExists == null) return NotFound("User doesn't Exist");
-
-        //    var reviewExists = await _repoProduct.ReviewRepo.Get(review.ReviewId);
-        //    if (reviewExists == null)
-        //    {
-        //        return NotFound("No Review found with that id!");
-        //    }
-
-        //    if (reviewExists.UserId != userExists.Id)
-        //    {
-        //        return Unauthorized("Not your review");
-        //    }
-
-        //    review.ReviewId = reviewId;
-        //    await _repoProduct.ReviewRepo.Update(review);
-        //    return Ok(review);
-        //}
-
-        //[HttpDelete("{id}/reviewes/{reviewId}")]
-        //public async Task<ActionResult> DeleteAReview(int reviewId)//reviewid
-        //{
-        //    var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-        //    if (userExists == null) return NotFound("User doesn't Exist");
-
-        //    var reviewExists = await _repoProduct.ReviewRepo.Get(reviewId);
-        //    if (reviewExists == null)
-        //    {
-        //        return NotFound("No Review found with that id!");
-        //    }
-
-        //    if (reviewExists.UserId != userExists.Id)
-        //    {
-        //        return Unauthorized("Not your review");
-        //    }
-        //    await _repoProduct.ReviewRepo.Delete(reviewId);
-        //    return Ok();
-        //}
+        }        
 
         private async Task<User> getUserFromHeader(string authHeader)
         {
