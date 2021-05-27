@@ -8,6 +8,6 @@ namespace Zembil.Repositories
 {
     public interface IReviewRepository : IRepositoryBase<Review>
     {
-        Task<IEnumerable<Review>> GetReviewes(int productId);
+        Task<List<Review>> GetReviewesOfProduct(int productId);
     }
 }

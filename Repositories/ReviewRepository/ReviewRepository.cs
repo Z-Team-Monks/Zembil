@@ -15,10 +15,10 @@ namespace Zembil.Repositories
 
         }
 
-        public async Task<IEnumerable<Review>> GetReviewes(int productId)
+        public async Task<List<Review>> GetReviewesOfProduct(int productId)
         {
             var reviewes = await _databaseContext.Reviewes.Where(r => r.ProductId == productId).ToListAsync();
             return reviewes;
-        }        
+        }
     }
 }

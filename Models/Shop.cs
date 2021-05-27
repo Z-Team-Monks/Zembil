@@ -13,6 +13,9 @@ namespace Zembil.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShopId { get; set; }
 
+        [Required(ErrorMessage = "Shop needs to have a name")]
+        public string Name { get; set; }
+
         [MaxLength(150)]
         public string BuildingName { get; set; }
 

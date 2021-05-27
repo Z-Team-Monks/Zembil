@@ -52,7 +52,7 @@ namespace Zembil.Controllers
             var productExist = await _repoReview.ProductRepo.Get(id);
             if (productExist == null) return NotFound("No product found with that id!");
 
-            var reviewesFromRepo = await _repoReview.ReviewRepo.GetReviewes(id);
+            var reviewesFromRepo = await _repoReview.ReviewRepo.GetReviewesOfProduct(id);
             var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
 
             foreach (var review in reviewesToReturn)
@@ -78,7 +78,7 @@ namespace Zembil.Controllers
             return Ok(reviewToReturn);
         }
 
-        
+
 
         [HttpPut("{reviewId}")]
         public async Task<ActionResult<ReviewToReturnDto>> UpdateReview(int reviewId, [FromBody] ReviewToUpdateDto reviewDto)
@@ -97,10 +97,10 @@ namespace Zembil.Controllers
                 return Unauthorized("Not your review");
             }
 
-            
+
             _mapper.Map(reviewDto, reviewExists);
             await _repoReview.ReviewRepo.Update(reviewExists);
-            
+
             var reviewToReturn = _mapper.Map<ReviewToReturnDto>(reviewExists);
             reviewToReturn.UserName = userExists.Username;
             return Ok(reviewToReturn);
@@ -110,7 +110,7 @@ namespace Zembil.Controllers
 
         [HttpDelete("{reviewId}")]
         public async Task<ActionResult> DeleteAReview(int reviewId)//reviewid
-        {            
+        {
             var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
             if (userExists == null) return NotFound("User doesn't Exist");
 

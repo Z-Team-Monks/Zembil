@@ -98,10 +98,10 @@ namespace Zembil.Repositories
                 products = products.Where(p => p.Name.ToLower().Contains(Name.ToLower())).ToList();
             }
 
-            if (!string.IsNullOrEmpty(Category))
-            {
-                products = products.Where(p => p.Category.ToLower().Equals(Category.ToLower())).ToList();
-            }
+            // if (!string.IsNullOrEmpty(Category))
+            // {
+            //     products = products.Where(p => p.Category.ToLower().Equals(Category.ToLower())).ToList();
+            // }
 
             return products;
         }

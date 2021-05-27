@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -21,7 +24,7 @@ namespace Zembil.Controllers
         private IRepositoryWrapper _repoProduct;
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
-        
+
         public ProductsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper)
         {
             _repoProduct = repoWrapper;
@@ -34,11 +37,15 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _repoProduct.ProductRepo.Get(id);
+            List<Review> productReview = await _repoProduct.ReviewRepo.GetReviewesOfProduct(product.Id);
+            int totalRating = productReview.Count();
+            int ratingCount = productReview.Sum(item => item.Rating);
+
             if (product == null)
             {
                 return NotFound();
             }
-            return product;
+            return Ok(new { Rating = new { TotalRating = totalRating, AverageRating = ratingCount }, Product = product });
         }
 
         [AllowAnonymous]
@@ -63,20 +70,20 @@ namespace Zembil.Controllers
         {
 
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
-            if (shopExists == null) return NotFound("Shop doesn't exist");            
+            if (shopExists == null) return NotFound("Shop doesn't exist");
 
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
 
             var shop = await _repoProduct.ShopRepo.Get(product.ShopId);
-            if(shop.OwnerId != user.Id) return Unauthorized();  //Not your shop 
+            if (shop.OwnerId != user.Id) return Unauthorized();  //Not your shop 
 
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
             return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.Id }, NewProduct);
         }
 
-        
+
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] JsonPatchDocument<Product> product)
         {
@@ -92,11 +99,11 @@ namespace Zembil.Controllers
 
             var shopExists = await _repoProduct.ShopRepo.Get(productExist.ShopId);
             if (shopExists == null) return NotFound("Shop doesn't exist");
-           
+
             var shop = await _repoProduct.ShopRepo.Get(productExist.ShopId);
             if (shop.OwnerId != user.Id) return Unauthorized();  //Not your shop
 
-            product.ApplyTo(productExist, ModelState);                        
+            product.ApplyTo(productExist, ModelState);
             await _repoProduct.ProductRepo.Update(productExist);
             return Ok(productExist);
         }
@@ -131,7 +138,7 @@ namespace Zembil.Controllers
             var reviewForRepo = _mapper.Map<Review>(review);
             await _repoProduct.ReviewRepo.Add(reviewForRepo);
             return Ok(review);
-        }        
+        }
 
         private async Task<User> getUserFromHeader(string authHeader)
         {
