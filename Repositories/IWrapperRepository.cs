@@ -11,6 +11,7 @@ namespace Zembil.Repositories
         IWishListRepository WishListRepo { get; }
         IReviewRepository ReviewRepo { get; }
         ICategoryRepository CategoryRepo { get; }
+        ILocationRepository LocationRepo { get; }
         Task SaveAsync();
     }
 }

@@ -13,6 +13,7 @@ namespace Zembil.Repositories
         private IWishListRepository _wishListRepository;
         private IReviewRepository _reviewRepository;
         private ICategoryRepository _categoryRepository;
+        private ILocationRepository _locationRepository;
 
         public WrapperRepository(ZembilContext context)
         {
@@ -87,7 +88,17 @@ namespace Zembil.Repositories
                 return _reviewRepository;
             }
         }
-
+        public ILocationRepository LocationRepo
+        {
+            get
+            {
+                if (_locationRepository == null)
+                {
+                    _locationRepository = new LocationRepository(_dbContext);
+                }
+                return _locationRepository;
+            }
+        }
 
         public async Task SaveAsync()
         {

@@ -30,6 +30,7 @@ namespace Zembil.Models
         [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
 
+        [Required(ErrorMessage = "The associated location id is required")]
         [ForeignKey("LocationId")]
         public int LocationId { get; set; }
 

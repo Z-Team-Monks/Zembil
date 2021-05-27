@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Routing;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Views;
 
 namespace Zembil.Controllers
 {
@@ -41,7 +42,12 @@ namespace Zembil.Controllers
             try
             {
                 var result = await _repository.ShopRepo.Get(id);
+                var location = await _repository.LocationRepo.Get(result.LocationId);
                 if (result == null) return NotFound();
+                if (location != null)
+                {
+                    return Ok(new { Location = location, Shop = result });
+                }
                 return result;
             }
             catch (Exception)
@@ -55,6 +61,7 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Shop>> DeleteShop(int id)
         {
             var result = await _repository.ShopRepo.Delete(id);
+            await _repository.LocationRepo.Delete(result.LocationId);
             return NoContent();
         }
 
@@ -77,8 +84,10 @@ namespace Zembil.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] Shop Shop)
+        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] ShopWithLocation shopWithLocation)
         {
+            var shop = shopWithLocation.Shop;
+            var location = shopWithLocation.Location;
 
             var ShopExist = await _repository.ShopRepo.Get(id);
 
@@ -86,13 +95,19 @@ namespace Zembil.Controllers
             {
                 return NotFound("No Shop found with that id!");
             }
-            Shop.ShopId = id;
-            await _repository.ShopRepo.Update(Shop);
-            return Ok(Shop);
+            if (location == null)
+            {
+                return BadRequest("Associated location is also required!");
+            }
+            shop.ShopId = id;
+            location.LocationId = shop.LocationId;
+            await _repository.ShopRepo.Update(shop);
+            await _repository.LocationRepo.Update(location);
+            return Ok(shop);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shop>> CreateShop(Shop shop)
+        public async Task<ActionResult<Shop>> CreateShop(ShopWithLocation shopWithLocation)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
@@ -101,12 +116,25 @@ namespace Zembil.Controllers
 
             if (userExists == null) return NotFound("User doesn't Exist");
 
+            Location location = shopWithLocation.Location;
+            Shop shop = shopWithLocation.Shop;
+
+            if (location == null)
+            {
+                return BadRequest("shop location can't be empty");
+            }
+            if (shop == null)
+            {
+                return BadRequest("shop can't be empty");
+            }
+
+            Location newLocation = await _repository.LocationRepo.Add(location);
+            shop.LocationId = newLocation.LocationId;
             try
             {
                 shop.OwnerId = tokenid;
                 var newShop = await _repository.ShopRepo.Add(shop);
-
-                return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
+                return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId, Location = newLocation }, newShop);
             }
             catch (Exception)
             {
@@ -162,8 +190,5 @@ namespace Zembil.Controllers
             await _repository.ShopRepo.RetractLike(userExists.Id, shopId);
             return Ok();
         }
-
-
-        //Get number of likes using search query
     }
 }
