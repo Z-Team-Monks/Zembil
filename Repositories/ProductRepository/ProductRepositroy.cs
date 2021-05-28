@@ -55,7 +55,7 @@ namespace Zembil.Repositories
 
             if (!string.IsNullOrEmpty(Name))
             {
-                products = products.Where(x => x.Name.Equals(Name)).ToList();
+                products = products.Where(x => x.ProductName.Equals(Name)).ToList();
             }
             var startIndex = (Pagination - 1) * Limit;
             var count = TotalProductsCount - startIndex;
@@ -78,7 +78,7 @@ namespace Zembil.Repositories
                 }
                 else if (Sort.ToLower().Equals("name"))
                 {
-                    products.Sort(delegate (Product p1, Product p2) { return p1.Name.CompareTo(p2.Name); });
+                    products.Sort(delegate (Product p1, Product p2) { return p1.ProductName.CompareTo(p2.ProductName); });
                 }
             }
 
@@ -95,7 +95,7 @@ namespace Zembil.Repositories
 
             if (!string.IsNullOrEmpty(Name))
             {
-                products = products.Where(p => p.Name.ToLower().Contains(Name.ToLower())).ToList();
+                products = products.Where(p => p.ProductName.ToLower().Contains(Name.ToLower())).ToList();
             }
 
             // if (!string.IsNullOrEmpty(Category))

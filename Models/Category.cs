@@ -9,7 +9,7 @@ namespace Zembil.Models
     public class Category
     {
         [Required]
-        public int id { get; set; }
+        public int CategoryId { get; set; }
 
         [Required]
         [MaxLength(200)]

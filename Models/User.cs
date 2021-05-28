@@ -9,7 +9,7 @@ namespace Zembil.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int UserId { get; set; }
 
         [Required(ErrorMessage = "Username is Required!")]
         [StringLength(60, ErrorMessage = "Username can't be longer then 60 characters!")]

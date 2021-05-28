@@ -7,27 +7,27 @@ using Zembil.Repositories;
 namespace Zembil.Services
 {
     public class AccountService : IAccountService
-    {       
+    {
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
         private readonly IRepositoryWrapper _repoUser;
 
 
-        public AccountService(IRepositoryWrapper repoWrapper,IJwtAuthenticationManager jwtAuthenticationManager)
+        public AccountService(IRepositoryWrapper repoWrapper, IJwtAuthenticationManager jwtAuthenticationManager)
         {
             _jwtAuthenticationManager = jwtAuthenticationManager;
             _repoUser = repoWrapper;
         }
 
         public async Task<string> Authenticate(string username, string password)
-        {            
+        {
             var users = await _repoUser.UserRepo.GetAll();
 
             var user = users.Find(u => u.Username == username && VerifyPassword(password, u.Password));
-            if(user == null)
+            if (user == null)
             {
                 return null;
-            }           
-            return _jwtAuthenticationManager.Authenticate(user.Id);
+            }
+            return _jwtAuthenticationManager.Authenticate(user.UserId);
         }
 
         //Decrypts the bearer token from the authentication header
@@ -41,10 +41,10 @@ namespace Zembil.Services
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public bool VerifyPassword(string plainPassword,string hashedPassword)
+        public bool VerifyPassword(string plainPassword, string hashedPassword)
         {
-            return BCrypt.Net.BCrypt.Verify(plainPassword,hashedPassword);
+            return BCrypt.Net.BCrypt.Verify(plainPassword, hashedPassword);
         }
-     
+
     }
 }

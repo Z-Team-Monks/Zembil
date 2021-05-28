@@ -32,7 +32,7 @@ namespace Zembil.Controllers
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
 
-            var cart = await _repoCart.WishListRepo.GetCart(user.Id);
+            var cart = await _repoCart.WishListRepo.GetCart(user.UserId);
             return Ok(cart);
         }
 
@@ -54,7 +54,7 @@ namespace Zembil.Controllers
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
 
-            wishListItem.UserId = user.Id;
+            wishListItem.UserId = user.UserId;
             wishListItem.DateAdded = DateTime.Now;
             await _repoCart.WishListRepo.Add(wishListItem);
             return CreatedAtAction(nameof(GetCartItem), new { Id = wishListItem.WishListItemId }, wishListItem);
@@ -67,7 +67,7 @@ namespace Zembil.Controllers
 
             var wishListFromRepo = await _repoCart.WishListRepo.Get(id);
             if (wishListFromRepo == null) return NotFound();
-            if (user == null || wishListFromRepo.UserId != user.Id) return Unauthorized();
+            if (user == null || wishListFromRepo.UserId != user.UserId) return Unauthorized();
 
             await _repoCart.WishListRepo.Delete(wishListFromRepo.WishListItemId);
             return Ok();

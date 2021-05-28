@@ -16,33 +16,39 @@ namespace Zembil.Repositories
         {
 
         }
-        public async Task<int> GetLikes(int shopId)
+        public async Task<Shop> GetShopWithLocation(int shopId)
         {
-            var likes = await _databaseContext.Set<ShopLike>().ToListAsync();
-            likes = likes.Where(l => l.ShopId == shopId).ToList();
-            return likes.Count();
+            var shop = await _databaseContext.Set<Shop>().Include(s => s.ShopLocation).FirstAsync(x => x.ShopId == shopId);
+            return shop;
 
         }
-        public async Task LikeShop(ShopLike shoplike)
+        public async Task<int> GetFollow(int shopId)
         {
-            _databaseContext.Set<ShopLike>().Add(shoplike);
+            var follow = await _databaseContext.Set<ShopFollow>().ToListAsync();
+            follow = follow.Where(l => l.ShopId == shopId).ToList();
+            return follow.Count();
+
+        }
+        public async Task FollowShop(ShopFollow shopFollow)
+        {
+            _databaseContext.Set<ShopFollow>().Add(shopFollow);
             await _databaseContext.SaveChangesAsync();
         }
 
-        public async Task RetractLike(int userid, int shopId)
+        public async Task RetractFollow(int userid, int shopId)
         {
-            var likeToRetract = _databaseContext.ShopLikes.SingleOrDefault(s => s.ShopId == shopId && s.UserId == userid);
-            if (likeToRetract != null)
+            var followToRetract = _databaseContext.ShopFollow.SingleOrDefault(s => s.ShopId == shopId && s.UserId == userid);
+            if (followToRetract != null)
             {
-                _databaseContext.ShopLikes.Remove(likeToRetract);
+                _databaseContext.ShopFollow.Remove(followToRetract);
                 await _databaseContext.SaveChangesAsync();
             }
         }
 
-        public bool LikeExists(int userid, int shopId)
+        public bool FollowExists(int userid, int shopId)
         {
-            var likeToRetract = _databaseContext.ShopLikes.SingleOrDefault(s => s.ShopId == shopId && s.UserId == userid);
-            return likeToRetract == null ? false : true;
+            var followToRetract = _databaseContext.ShopFollow.SingleOrDefault(s => s.ShopId == shopId && s.UserId == userid);
+            return followToRetract == null ? false : true;
         }
         public async Task<List<Shop>> FilterProducts(QueryParams queryParams)
         {

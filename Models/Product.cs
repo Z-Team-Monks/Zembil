@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,24 +10,21 @@ namespace Zembil.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int ProductId { get; set; }
 
-        [ForeignKey(nameof(Shop))]
+        [ForeignKey("ShopId")]
         public int ShopId { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string ProductName { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "0:yyy-MM-dd", ApplyFormatInEditMode = true)]
-        public DateTime Date { get; set; }
-
-        //Why is this here?
-        [Display(Name = "Builing Name")]
-        public string BuilingName { get; set; }
+        public DateTime DateInserted { get; set; }
 
         public string Description { get; set; }
 
+        [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
 
         [Required]
@@ -43,6 +41,11 @@ namespace Zembil.Models
 
         [Display(Name = "Product Count")]
         public int ProductCount { get; set; }
+
+        // add rating id related to the product
+        [ForeignKey("ReviewId")]
+        public int ProductReviewId { get; set; }
+        public Review ProductReviews { get; set; }
 
     }
 }

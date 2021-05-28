@@ -37,14 +37,16 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _repoProduct.ProductRepo.Get(id);
-            List<Review> productReview = await _repoProduct.ReviewRepo.GetReviewesOfProduct(product.Id);
-            int totalRating = productReview.Count();
-            int ratingCount = productReview.Sum(item => item.Rating);
-
             if (product == null)
             {
                 return NotFound();
             }
+            List<Review> productReview = await _repoProduct.ReviewRepo.GetReviewesOfProduct(product.ProductId);
+            int totalRating = productReview.Count();
+            // int c = productReview.Select(x => x.Rating).Sum();
+            int ratingCount = productReview.Sum(item => item.Rating);
+
+
             return Ok(new { Rating = new { TotalRating = totalRating, AverageRating = ratingCount }, Product = product });
         }
 
@@ -76,11 +78,11 @@ namespace Zembil.Controllers
             if (user == null) return Unauthorized();
 
             var shop = await _repoProduct.ShopRepo.Get(product.ShopId);
-            if (shop.OwnerId != user.Id) return Unauthorized();  //Not your shop 
+            if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop 
 
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
-            return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.Id }, NewProduct);
+            return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.ProductId }, NewProduct);
         }
 
 
@@ -101,7 +103,7 @@ namespace Zembil.Controllers
             if (shopExists == null) return NotFound("Shop doesn't exist");
 
             var shop = await _repoProduct.ShopRepo.Get(productExist.ShopId);
-            if (shop.OwnerId != user.Id) return Unauthorized();  //Not your shop
+            if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop
 
             product.ApplyTo(productExist, ModelState);
             await _repoProduct.ProductRepo.Update(productExist);
@@ -118,7 +120,7 @@ namespace Zembil.Controllers
             {
                 return NotFound("No product found with that id!");
             }
-            product.Id = id;
+            product.ProductId = id;
             await _repoProduct.ProductRepo.Update(product);
             return Ok(product);
         }
@@ -132,7 +134,7 @@ namespace Zembil.Controllers
             if (productExist == null) return NotFound("No product found with that id!");
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            review.UserId = userExists.Id;
+            review.UserId = userExists.UserId;
             review.ProductId = id;
 
             var reviewForRepo = _mapper.Map<Review>(review);

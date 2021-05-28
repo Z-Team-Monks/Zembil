@@ -7,11 +7,12 @@ namespace Zembil.Repositories
 {
     public interface IShopRepository : IRepositoryBase<Shop>
     {
-        public Task LikeShop(ShopLike shoplike);
-        public Task RetractLike(int userid, int shopId);
-        public bool LikeExists(int userid, int shopId);
-        Task<int> GetLikes(int shopId);
+        public Task FollowShop(ShopFollow shopFollow);
+        public Task RetractFollow(int userid, int shopId);
+        public bool FollowExists(int userid, int shopId);
+        Task<int> GetFollow(int shopId);
         Task<List<Shop>> FilterProducts(QueryParams queryParams);
         Task<List<Shop>> SearchShops(QueryParams queryParams);
+        Task<Shop> GetShopWithLocation(int shopId);
     }
 }

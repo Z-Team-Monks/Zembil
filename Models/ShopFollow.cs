@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Zembil.Models
 {
-    [Table("shopLike")]
-    public class ShopLike
+    [Table("shopFollow")]
+    public class ShopFollow
     {
         [Key]
         public int ShopLikeId { get; set; }

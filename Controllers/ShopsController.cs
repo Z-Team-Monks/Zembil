@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -20,11 +21,13 @@ namespace Zembil.Controllers
     {
         private readonly IRepositoryWrapper _repository;
         private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public ShopsController(IRepositoryWrapper repository, IAccountService accountService)
+        public ShopsController(IRepositoryWrapper repository, IAccountService accountService, IMapper mapper)
         {
             _repository = repository;
             _accountService = accountService;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -32,7 +35,8 @@ namespace Zembil.Controllers
         public async Task<IEnumerable<Shop>> GetShops()
         {
             var results = await _repository.ShopRepo.GetAll();
-            return results;
+            var shops = _mapper.Map<List<Shop>>(results);
+            return shops;
         }
 
         [AllowAnonymous]
@@ -41,13 +45,8 @@ namespace Zembil.Controllers
         {
             try
             {
-                var result = await _repository.ShopRepo.Get(id);
-                var location = await _repository.LocationRepo.Get(result.LocationId);
+                var result = await _repository.ShopRepo.GetShopWithLocation(id);
                 if (result == null) return NotFound();
-                if (location != null)
-                {
-                    return Ok(new { Location = location, Shop = result });
-                }
                 return result;
             }
             catch (Exception)
@@ -61,7 +60,7 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Shop>> DeleteShop(int id)
         {
             var result = await _repository.ShopRepo.Delete(id);
-            await _repository.LocationRepo.Delete(result.LocationId);
+            await _repository.LocationRepo.Delete(result.ShopLocationId);
             return NoContent();
         }
 
@@ -100,14 +99,14 @@ namespace Zembil.Controllers
                 return BadRequest("Associated location is also required!");
             }
             shop.ShopId = id;
-            location.LocationId = shop.LocationId;
+            location.LocationId = shop.ShopLocationId;
             await _repository.ShopRepo.Update(shop);
             await _repository.LocationRepo.Update(location);
             return Ok(shop);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shop>> CreateShop(ShopWithLocation shopWithLocation)
+        public async Task<ActionResult<Shop>> CreateShop(Shop shop)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
@@ -116,25 +115,15 @@ namespace Zembil.Controllers
 
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            Location location = shopWithLocation.Location;
-            Shop shop = shopWithLocation.Shop;
-
-            if (location == null)
-            {
-                return BadRequest("shop location can't be empty");
-            }
             if (shop == null)
             {
                 return BadRequest("shop can't be empty");
             }
-
-            Location newLocation = await _repository.LocationRepo.Add(location);
-            shop.LocationId = newLocation.LocationId;
             try
             {
                 shop.OwnerId = tokenid;
                 var newShop = await _repository.ShopRepo.Add(shop);
-                return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId, Location = newLocation }, newShop);
+                return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
             }
             catch (Exception)
             {
@@ -142,52 +131,52 @@ namespace Zembil.Controllers
             }
         }
 
-        [HttpGet("{shopId:int}/likes")]
-        public async Task<ActionResult> GetLikes(int shopId)
+        [HttpGet("{shopId:int}/follow")]
+        public async Task<ActionResult> Getfollow(int shopId)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
 
             var userExists = await _repository.UserRepo.Get(tokenid);
 
-            var count = await _repository.ShopRepo.GetLikes(shopId);
-            return Ok($"shop likes: {count}");
+            var count = await _repository.ShopRepo.GetFollow(shopId);
+            return Ok($"shop follow: {count}");
         }
-        [HttpPost("{shopId:int}/likes")]
-        public async Task<ActionResult> LikeShop(int shopId)
+        [HttpPost("{shopId:int}/follow")]
+        public async Task<ActionResult> FollowShop(int shopId)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
 
             var userExists = await _repository.UserRepo.Get(tokenid);
-            var likeExists = _repository.ShopRepo.LikeExists(userExists.Id, shopId);
+            var followExists = _repository.ShopRepo.FollowExists(userExists.UserId, shopId);
 
             if (userExists == null) return NotFound("User doesn't Exist");
-            if (likeExists) return BadRequest("Shop already liked by this user");
+            if (followExists) return BadRequest("Shop already liked by this user");
 
-            ShopLike shoplike = new ShopLike
+            ShopFollow shopFollow = new ShopFollow
             {
                 UserId = tokenid,
                 ShopId = shopId
             };
 
-            await _repository.ShopRepo.LikeShop(shoplike);
+            await _repository.ShopRepo.FollowShop(shopFollow);
             return Ok();
         }
 
-        [HttpDelete("{shopId:int}/likes")]
-        public async Task<ActionResult> RetractLike(int shopId)
+        [HttpDelete("{shopId:int}/follow")]
+        public async Task<ActionResult> RetractFollow(int shopId)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
 
             var userExists = await _repository.UserRepo.Get(tokenid);
-            var likeExists = _repository.ShopRepo.LikeExists(userExists.Id, shopId);
+            var followExists = _repository.ShopRepo.FollowExists(userExists.UserId, shopId);
 
-            if (!likeExists) return BadRequest("Can't retract shop not liked before");
+            if (!followExists) return BadRequest("Can't retract shop not liked before");
             //if (userExists == null) return NotFound("User doesn't Exist");            
 
-            await _repository.ShopRepo.RetractLike(userExists.Id, shopId);
+            await _repository.ShopRepo.RetractFollow(userExists.UserId, shopId);
             return Ok();
         }
     }

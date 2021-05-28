@@ -16,14 +16,11 @@ namespace Zembil.Views
 
         private static CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
         private static TextInfo textInfo = cultureInfo.TextInfo;
-
-        private string _category;
         private string _condition;
 
         public int ShopId { get; set; }
-        public string Name { get; set; }
         public DateTime Date { get; set; }
-        public string BuilingName { get; set; }
+        public string ProductName { get; set; }
         public string Description { get; set; }
         //database categories validator
         public int CategoryId { get; set; }

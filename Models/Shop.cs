@@ -9,12 +9,17 @@ namespace Zembil.Models
     [Table("shops")]
     public class Shop
     {
+        public Shop()
+        {
+            IsApproved = false;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShopId { get; set; }
 
         [Required(ErrorMessage = "Shop needs to have a name")]
-        public string Name { get; set; }
+        public string ShopName { get; set; }
 
         [MaxLength(150)]
         public string BuildingName { get; set; }
@@ -35,10 +40,14 @@ namespace Zembil.Models
 
         [Required(ErrorMessage = "The associated location id is required")]
         [ForeignKey("LocationId")]
-        public int LocationId { get; set; }
+        public int ShopLocationId { get; set; }
+        public Location ShopLocation { get; set; }
 
         [MaxLength(500)]
         public string Description { get; set; }
+
+
+        public bool IsApproved { get; set; }
 
     }
 }

@@ -74,7 +74,8 @@ namespace Zembil.Controllers
             user.Password = _accountService.HashPassword(user.Password);
             user.Role = "user";
             var NewUser = await _repoUser.UserRepo.Add(user);
-            return CreatedAtAction(nameof(GetUser), new { Id = NewUser.Id }, NewUser);
+            var userDTO = _mapper.Map<UserGetDto>(NewUser);
+            return CreatedAtAction(nameof(GetUser), new { Id = userDTO.UserId }, userDTO);
         }
 
         [HttpPost("admin")]
@@ -91,7 +92,7 @@ namespace Zembil.Controllers
                     user.Password = _accountService.HashPassword(user.Password);
                     user.Role = "admin";
                     var NewUser = await _repoUser.UserRepo.Add(user);
-                    return CreatedAtAction(nameof(GetUser), new { Id = NewUser.Id }, NewUser);
+                    return CreatedAtAction(nameof(GetUser), new { Id = NewUser.UserId }, NewUser);
                 }
             }
 
@@ -101,8 +102,8 @@ namespace Zembil.Controllers
         [HttpPut("users/{id}")]
         public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
         {
-            var userExist = await _repoUser.UserRepo.Get(user.Id);
-            if (id != user.Id)
+            var userExist = await _repoUser.UserRepo.Get(user.UserId);
+            if (id != user.UserId)
             {
                 return BadRequest();
             }

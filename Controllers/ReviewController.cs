@@ -37,7 +37,7 @@ namespace Zembil.Controllers
             if (productExist == null) return NotFound("No product found with that id!");
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            review.UserId = userExists.Id;
+            review.UserId = userExists.UserId;
             review.ProductId = id;
 
             var reviewForRepo = _mapper.Map<Review>(review);
@@ -92,7 +92,7 @@ namespace Zembil.Controllers
                 return NotFound("No Review found with that id!");
             }
 
-            if (reviewExists.UserId != userExists.Id)
+            if (reviewExists.UserId != userExists.UserId)
             {
                 return Unauthorized("Not your review");
             }
@@ -120,7 +120,7 @@ namespace Zembil.Controllers
                 return NotFound("No Review found with that id!");
             }
 
-            if (reviewExists.UserId != userExists.Id)
+            if (reviewExists.UserId != userExists.UserId)
             {
                 return Unauthorized("Not your review");
             }
