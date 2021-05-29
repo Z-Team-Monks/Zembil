@@ -24,6 +24,7 @@ namespace Zembil.Views
         public string Description { get; set; }
         //database categories validator
         public int CategoryId { get; set; }
+        public string Brand { get; set; }
         public int Price { get; set; }
         //used or new validator
         public string Condition
