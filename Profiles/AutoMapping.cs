@@ -14,7 +14,6 @@ namespace Zembil.Profiles
         {
             CreateMap<Product, ProductCreateDto>();
             CreateMap<ProductCreateDto, Product>();
-            CreateMap<Product, ProductReviewDto>();
             CreateMap<ReviewDto, Review>()
                 .ForMember(
                     dest => dest.ReviewDate,

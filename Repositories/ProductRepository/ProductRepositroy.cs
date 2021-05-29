@@ -115,12 +115,12 @@ namespace Zembil.Repositories
             int Latest = queryParams.Latest;
             int Popular = queryParams.Popular;
             int MaxAmount = 20;
-            List<Product> products = await _databaseContext.Set<Product>().ToListAsync();
+            List<Product> products = await _databaseContext.Set<Product>().Include(x => x.ProductReviews).ToListAsync();
 
 
             if (Latest != 0)
             {
-                products.Sort(delegate (Product p1, Product p2) { return p1.DateInserted.CompareTo(p2.DateInserted); });
+                products = products.OrderByDescending(p => p.DateInserted).ToList();
             }
             else if (Popular != 0)
             {
@@ -130,7 +130,11 @@ namespace Zembil.Repositories
                             .Select(x => x.ProductId)
                             .Take(MaxAmount)
                             .ToListAsync();
-                products = products.Where(x => TopProducts.Contains(x.ProductId)).ToList();
+                foreach (var item in TopProducts)
+                {
+                    Console.WriteLine(item);
+                }
+                products = TopProducts.Select(x => products.Find(y => y.ProductId == x)).ToList();
             }
 
             int itemCount = products.Count();
