@@ -65,19 +65,31 @@ namespace Zembil.Controllers
         }
 
         [HttpPatch("{id:int}")]
-        public async Task<ActionResult<Shop>> UpdateShop(int id, [FromBody] JsonPatchDocument<Shop> Shop)
-        {
+        public async Task<ActionResult<Shop>> UpdateShop(int id, [FromBody] JsonPatchDocument<ShopChangeDto> shopChangeDto)
+        {            
+            var userExists = getUserFromHeader(Request.Headers["Authorization"]);            
 
-            var ShopExist = await _repository.ShopRepo.Get(id);
-
-            if (ShopExist == null)
+            if (userExists == null)
             {
-                return NotFound("No Shop found with that id!");
+                return Unauthorized();
             }
+
+            //use this dto inorder not to accept status updates in this route
+            ShopChangeDto updatedDto;
+            var ShopExist = await _repository.ShopRepo.Get(id);                        
+
+            if (ShopExist == null || ShopExist.ShopId != userExists.Id)
+            {
+                return NotFound("No Shop found with that id for current user!");
+            }            
             else
             {
-                Shop.ApplyTo(ShopExist, ModelState);
+                updatedDto = _mapper.Map<ShopChangeDto>(ShopExist);
+                shopChangeDto.ApplyTo(updatedDto);
+                //ShopChangeDto.ApplyTo(shopChangeDto, ModelState);
             }
+
+            ShopExist = _mapper.Map<Shop>(updatedDto);
             await _repository.ShopRepo.Update(ShopExist);
             return Ok(ShopExist);
         }
@@ -88,7 +100,7 @@ namespace Zembil.Controllers
             var shop = shopWithLocation.Shop;
             var location = shopWithLocation.Location;
 
-            var ShopExist = await _repository.ShopRepo.Get(id);
+            var ShopExist = await _repository.ShopRepo.Get(id);            
 
             if (ShopExist == null)
             {
@@ -122,7 +134,7 @@ namespace Zembil.Controllers
             try
             {
                 shop.OwnerId = tokenid;
-                shop.IsApproved = false;
+                shop.IsActive = null;
                 var newShop = await _repository.ShopRepo.Add(shop);
                 return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
             }
@@ -143,6 +155,7 @@ namespace Zembil.Controllers
             var count = await _repository.ShopRepo.GetFollow(shopId);
             return Ok($"shop follow: {count}");
         }
+
         [HttpPost("{shopId:int}/follow")]
         public async Task<ActionResult> FollowShop(int shopId)
         {
@@ -179,6 +192,36 @@ namespace Zembil.Controllers
 
             await _repository.ShopRepo.RetractFollow(userExists.UserId, shopId);
             return Ok();
+        }
+
+        [HttpPut("{shopId:int}/status")]
+        public async Task<ActionResult> ChangeStatus(int shopId, [FromBody] ShopStatusDto shopStatus)
+        {
+            var user = await getUserFromHeader(Request.Headers["Authorization"]);
+            const string admin = "admin";
+            if (user == null || user.Role.ToLower() != admin)
+            {
+                return Unauthorized();
+            }
+
+            var shopRepo = await _repository.ShopRepo.Get(shopId);
+            if (shopRepo == null) return NotFound("shop doesn't exist");
+
+            if (shopStatus == null)
+            {
+                return BadRequest("isActive should be included");
+            }
+
+            shopRepo.IsActive = shopStatus.IsActive;
+            await _repository.ShopRepo.Update(shopRepo);
+            return Ok(shopRepo);
+        }
+
+        private async Task<User> getUserFromHeader(string authHeader)
+        {
+            int tokenid = _accountService.Decrypt(authHeader);
+            var userExists = await _repository.UserRepo.Get(tokenid);
+            return userExists;
         }
     }
 }
