@@ -20,6 +20,11 @@ namespace Zembil.DbContexts
         public DbSet<WishListItem> WishList { get; set; }
         public DbSet<Ads> Ads { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Review>()
+               .HasKey(r => new { r.ProductId, r.UserId });
+        }
         // protected override void OnModelCreating(ModelBuilder modelBuilder)
         // {
         //     // seed the database with dummy data

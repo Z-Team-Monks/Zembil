@@ -9,7 +9,7 @@ namespace Zembil.Models
     public class Ads
     {
 
-        [Required]
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AdsId { get; set; }
 

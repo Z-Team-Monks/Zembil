@@ -9,6 +9,7 @@ namespace Zembil.Models
     public class WishListItem
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int WishListItemId { get; set; }
 
         [ForeignKey("ProductId")]

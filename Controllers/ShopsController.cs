@@ -40,6 +40,16 @@ namespace Zembil.Controllers
         }
 
         [AllowAnonymous]
+        [Route("{id:int}/products")]
+        [HttpGet]
+        public async Task<IEnumerable<Product>> GetProductsOfShop(int id)
+        {
+            var results = await _repository.ShopRepo.GetAllProductsOfShop(id);
+            var products = _mapper.Map<List<Product>>(results);
+            return products;
+        }
+
+        [AllowAnonymous]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Shop>> GetShop(int id)
         {

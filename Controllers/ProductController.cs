@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -24,12 +27,14 @@ namespace Zembil.Controllers
         private IRepositoryWrapper _repoProduct;
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public ProductsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper)
+        public ProductsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             _repoProduct = repoWrapper;
             _accountServices = accountServices;
             _mapper = mapper;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [AllowAnonymous]
@@ -69,7 +74,7 @@ namespace Zembil.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] List<IFormFile> files = null)
         {
 
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
@@ -83,7 +88,27 @@ namespace Zembil.Controllers
 
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
+
             return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.ProductId }, NewProduct);
+        }
+
+        [Route("uploads")]
+        [HttpPost]
+        public async Task<ActionResult<Product>> UploadProductImage([FromForm] IFormFile file)
+        {
+            // file upload
+            var size = file.Length;
+            Console.WriteLine($"File upload size: {size}");
+            var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/", file.FileName);
+            if (file.Length > 0)
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+
+            return CreatedAtAction(nameof(UploadProductImage), new { Images = file.FileName, Size = size, filePath });
         }
 
 
@@ -129,8 +154,6 @@ namespace Zembil.Controllers
         [HttpPost("{id}/reviewes")]
         public async Task<ActionResult<Review>> AddReview(int id, Review review)
         {
-
-            //prevent same user from adding multiple review to one product
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
             var userExists = await getUserFromHeader(Request.Headers["Authorization"]);

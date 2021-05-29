@@ -15,6 +15,7 @@ using Zembil.Services;
 using System;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Collections.Generic;
+using Zembil.ErrorHandler;
 
 namespace Zembil
 {
@@ -59,6 +60,9 @@ namespace Zembil
                 });
             });
 
+            // add cors policy
+            services.AddCors(options => options.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
             var tokenKey = Configuration.GetValue<string>("TokenKey");
             var key = "this is my custom Secret key for authnetication";
 
@@ -98,6 +102,10 @@ namespace Zembil
                 });
 
             }
+            // custom exception handler registration
+            app.ConfigureCustomExceptionMiddleware();
+
+            app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();
 

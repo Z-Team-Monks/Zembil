@@ -11,6 +11,7 @@ namespace Zembil.Models
     public class ShopFollow
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShopLikeId { get; set; }
 
         [ForeignKey("UserId")]

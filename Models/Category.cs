@@ -9,6 +9,7 @@ namespace Zembil.Models
     public class Category
     {
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
 
         [Required]

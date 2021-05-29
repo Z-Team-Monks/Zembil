@@ -145,5 +145,38 @@ namespace Zembil.Repositories
             products = products.GetRange(0, MaxAmount);
             return products;
         }
+
+        public async Task<List<Product>> GetCategorizedProducts(TrendingQuery queryParams)
+        {
+
+            int Latest = queryParams.Latest;
+            int Popular = queryParams.Popular;
+            int MaxAmount = 20;
+            List<Product> products = await _databaseContext.Set<Product>().Include(x => x.ProductReviews).ToListAsync();
+
+
+            if (Latest != 0)
+            {
+                products = products.OrderByDescending(p => p.DateInserted).ToList();
+            }
+            else if (Popular != 0)
+            {
+                var TopProducts = await _databaseContext.Set<Review>().GroupBy(x => x.ProductId)
+                            .Select(x => new { ProductId = x.Key, AvgRatingSum = x.Average(a => a.Rating) })
+                            .OrderByDescending(x => x.AvgRatingSum)
+                            .Select(x => x.ProductId)
+                            .Take(MaxAmount)
+                            .ToListAsync();
+                products = TopProducts.Select(x => products.Find(y => y.ProductId == x)).ToList();
+            }
+
+            int itemCount = products.Count();
+            if (itemCount <= MaxAmount)
+            {
+                return products;
+            }
+            products = products.GetRange(0, MaxAmount);
+            return products;
+        }
     }
 }
