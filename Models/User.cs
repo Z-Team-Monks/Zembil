@@ -7,6 +7,7 @@ namespace Zembil.Models
     [Table("users")]
     public class User
     {
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
@@ -25,8 +26,11 @@ namespace Zembil.Models
 
         [Required]
         public string Role { get; set; }
-
         public string Phone { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "0:yyy-MM-dd", ApplyFormatInEditMode = true)]
+        public DateTime DateAccountCreated { get; set; }
 
     }
 }

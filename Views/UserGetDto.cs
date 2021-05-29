@@ -15,5 +15,7 @@ namespace Zembil.Views
         public string Role { get; set; }
 
         public string Phone { get; set; }
+        public DateTime DateAccountCreated { get; set; }
+
     }
 }

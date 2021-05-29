@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System;
 using Zembil.Models;
 
 namespace Zembil.DbContexts
@@ -31,7 +32,8 @@ namespace Zembil.DbContexts
                         Email = "se.kidus.yoseph@gmail.com",
                         Password = "$2a$11$iIJq.LUUPeCxoG9gNKL6uuUbcXTjeQapIUgSB5k4kXx5iKgGiSt4q",
                         Role = "admin",
-                        Phone = "+251972476097"
+                        Phone = "+251972476097",
+                        DateAccountCreated = DateTime.Now
                     }
                 );
 
