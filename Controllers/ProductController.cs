@@ -113,6 +113,10 @@ namespace Zembil.Controllers
             if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop
 
             product.ApplyTo(productExist, ModelState);
+            if (!TryValidateModel(productExist))
+            {
+                return ValidationProblem(ModelState);
+            }
             await _repoProduct.ProductRepo.Update(productExist);
             return Ok(productExist);
         }
