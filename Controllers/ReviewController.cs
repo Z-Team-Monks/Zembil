@@ -29,19 +29,22 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Review>> AddReview(int id, ReviewDto review)
+        public async Task<ActionResult<Review>> AddReview(int id, Review review)
         {
+            // can't give multiple review for same product
+
+
             var productExist = await _repoReview.ProductRepo.Get(id);
             var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
 
             if (productExist == null) return NotFound("No product found with that id!");
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            review.UserId = userExists.UserId;
-            review.ProductId = id;
+            // review.UserId = userExists.UserId;
+            // review.ProductId = id;
 
-            var reviewForRepo = _mapper.Map<Review>(review);
-            await _repoReview.ReviewRepo.Add(reviewForRepo);
+            // var reviewForRepo = _mapper.Map<Review>(review);
+            await _repoReview.ReviewRepo.Add(review);
             return Ok(review);
         }
 

@@ -15,9 +15,10 @@ namespace Zembil.DbContexts
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
-        public DbSet<Review> Reviewes { get; set; }
+        public DbSet<Review> Reviews { get; set; }
         public DbSet<ShopFollow> ShopFollow { get; set; }
         public DbSet<WishListItem> WishList { get; set; }
+        public DbSet<Ads> Ads { get; set; }
 
         // protected override void OnModelCreating(ModelBuilder modelBuilder)
         // {

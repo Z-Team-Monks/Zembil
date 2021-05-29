@@ -36,18 +36,19 @@ namespace Zembil.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _repoProduct.ProductRepo.Get(id);
+            var product = await _repoProduct.ProductRepo.GetProductWithReviewes(id);
+            // List<Review> reviews = await _repoProduct.ReviewRepo.GetReviewesOfProduct(id);
             if (product == null)
             {
                 return NotFound();
             }
-            List<Review> productReview = await _repoProduct.ReviewRepo.GetReviewesOfProduct(product.ProductId);
-            int totalRating = productReview.Count();
-            // int c = productReview.Select(x => x.Rating).Sum();
-            int ratingCount = productReview.Sum(item => item.Rating);
-
-
-            return Ok(new { Rating = new { TotalRating = totalRating, AverageRating = ratingCount }, Product = product });
+            // List<Review> productReview = await _repoProduct.ReviewRepo.GetReviewesOfProduct(product.ProductId);
+            // int totalRating = productReview.Count();
+            // // int c = productReview.Select(x => x.Rating).Sum();
+            // int ratingCount = productReview.Sum(item => item.Rating);
+            // product.ProductReviews = reviews;
+            return product;
+            // return Ok(new { Rating = reviews, Product = product });
         }
 
         [AllowAnonymous]
@@ -126,8 +127,11 @@ namespace Zembil.Controllers
         }
 
         [HttpPost("{id}/reviewes")]
-        public async Task<ActionResult<Review>> AddReview(int id, ReviewDto review)
+        public async Task<ActionResult<Review>> AddReview(int id, Review review)
         {
+
+            //prevent same user from adding multiple review to one product
+
             var productExist = await _repoProduct.ProductRepo.Get(id);
             var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
 
@@ -137,9 +141,22 @@ namespace Zembil.Controllers
             review.UserId = userExists.UserId;
             review.ProductId = id;
 
+
+            await _repoProduct.ReviewRepo.Add(review);
             var reviewForRepo = _mapper.Map<Review>(review);
-            await _repoProduct.ReviewRepo.Add(reviewForRepo);
-            return Ok(review);
+            return Ok(reviewForRepo);
+        }
+
+        [HttpGet("trending")]
+        public async Task<IEnumerable<Product>> TrendingProducts([FromQuery] TrendingQuery queryParams)
+        {
+            if (queryParams == null)
+            {
+                queryParams = new TrendingQuery();
+                queryParams.Latest = 1;
+            }
+            var trendingProducts = await _repoProduct.ProductRepo.GetTrendingProducts(queryParams);
+            return trendingProducts;
         }
 
         private async Task<User> getUserFromHeader(string authHeader)

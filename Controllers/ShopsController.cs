@@ -122,6 +122,7 @@ namespace Zembil.Controllers
             try
             {
                 shop.OwnerId = tokenid;
+                shop.IsApproved = false;
                 var newShop = await _repository.ShopRepo.Add(shop);
                 return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
             }

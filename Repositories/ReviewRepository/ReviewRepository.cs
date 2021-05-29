@@ -17,7 +17,7 @@ namespace Zembil.Repositories
 
         public async Task<List<Review>> GetReviewesOfProduct(int productId)
         {
-            var reviewes = await _databaseContext.Reviewes.Where(r => r.ProductId == productId).ToListAsync();
+            var reviewes = await _databaseContext.Reviews.Where(r => r.ProductId == productId).ToListAsync();
             return reviewes;
         }
     }

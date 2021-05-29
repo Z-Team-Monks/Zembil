@@ -5,12 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zembil.Models
 {
-    [Table("review")]
+    [Table("reviews")]
     public class Review
     {
-        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ReviewId { get; set; }
-
         [ForeignKey("UserId")]
         public int UserId { get; set; }
 

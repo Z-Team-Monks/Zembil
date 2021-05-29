@@ -8,7 +8,7 @@ namespace Zembil.Views
     public class ReviewToReturnDto
     {
         public int ReviewId { get; set; }
-        public int UserId { get; set; }        
+        public int UserId { get; set; }
         public int ProductId { get; set; }
         public string UserName { get; set; }
         public int Rating { get; set; }

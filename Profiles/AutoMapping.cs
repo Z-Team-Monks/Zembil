@@ -14,6 +14,7 @@ namespace Zembil.Profiles
         {
             CreateMap<Product, ProductCreateDto>();
             CreateMap<ProductCreateDto, Product>();
+            CreateMap<Product, ProductReviewDto>();
             CreateMap<ReviewDto, Review>()
                 .ForMember(
                     dest => dest.ReviewDate,
@@ -21,9 +22,11 @@ namespace Zembil.Profiles
             CreateMap<Review, ReviewToReturnDto>();
             CreateMap<ReviewToUpdateDto, Review>();
             CreateMap<User, UserGetDto>();
+            CreateMap<List<User>, List<UserGetDto>>();
             CreateMap<Shop, ShopReturnDto>();
             CreateMap<ShopReturnDto, Shop>();
             CreateMap<List<Shop>, List<ShopReturnDto>>();
+
 
         }
     }

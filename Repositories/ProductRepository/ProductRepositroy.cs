@@ -28,10 +28,12 @@ namespace Zembil.Repositories
         //    _databaseContext.Set<Review>().Remove
         //}
 
-        public IEnumerable<Review> GetReviewes(int productId)
+        public async Task<Product> GetProductWithReviewes(int productId)
         {
-            var reviewes = _databaseContext.Reviewes.Where(r => r.ProductId == productId);
-            return reviewes;
+            var fullProductList = await _databaseContext.Set<Product>().Include(x => x.ProductReviews).ToListAsync();
+            var products = fullProductList.FirstOrDefault(r => r.ProductId == productId);
+            Console.WriteLine($"Products: {fullProductList[0].ProductReviews}");
+            return products;
         }
 
         public async Task<List<Product>> FilterProducts(QueryParams queryParams)
@@ -93,6 +95,7 @@ namespace Zembil.Repositories
             string Name = queryParams.Name;
             string Category = queryParams.Category;
 
+
             if (!string.IsNullOrEmpty(Name))
             {
                 products = products.Where(p => p.ProductName.ToLower().Contains(Name.ToLower())).ToList();
@@ -103,6 +106,39 @@ namespace Zembil.Repositories
             //     products = products.Where(p => p.Category.ToLower().Equals(Category.ToLower())).ToList();
             // }
 
+            return products;
+        }
+
+        public async Task<List<Product>> GetTrendingProducts(TrendingQuery queryParams)
+        {
+
+            int Latest = queryParams.Latest;
+            int Popular = queryParams.Popular;
+            int MaxAmount = 20;
+            List<Product> products = await _databaseContext.Set<Product>().ToListAsync();
+
+
+            if (Latest != 0)
+            {
+                products.Sort(delegate (Product p1, Product p2) { return p1.DateInserted.CompareTo(p2.DateInserted); });
+            }
+            else if (Popular != 0)
+            {
+                var TopProducts = await _databaseContext.Set<Review>().GroupBy(x => x.ProductId)
+                            .Select(x => new { ProductId = x.Key, AvgRatingSum = x.Average(a => a.Rating) })
+                            .OrderByDescending(x => x.AvgRatingSum)
+                            .Select(x => x.ProductId)
+                            .Take(MaxAmount)
+                            .ToListAsync();
+                products = products.Where(x => TopProducts.Contains(x.ProductId)).ToList();
+            }
+
+            int itemCount = products.Count();
+            if (itemCount <= MaxAmount)
+            {
+                return products;
+            }
+            products = products.GetRange(0, MaxAmount);
             return products;
         }
     }

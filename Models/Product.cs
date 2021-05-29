@@ -45,7 +45,7 @@ namespace Zembil.Models
         // add rating id related to the product
         [ForeignKey("ReviewId")]
         public int ProductReviewId { get; set; }
-        public Review ProductReviews { get; set; }
+        public List<Review> ProductReviews { get; set; }
 
     }
 }

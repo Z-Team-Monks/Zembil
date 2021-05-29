@@ -12,6 +12,12 @@ namespace Zembil.Utils
 
     }
 
+    public class TrendingQuery
+    {
+        public int Latest { get; set; }
+        public int Popular { get; set; }
+    }
+
     public class UserCredentials
     {
         public string Username { get; set; }

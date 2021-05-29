@@ -14,6 +14,7 @@ namespace Zembil.Repositories
         private IReviewRepository _reviewRepository;
         private ICategoryRepository _categoryRepository;
         private ILocationRepository _locationRepository;
+        private IAdsRepository _adsRepository;
 
         public WrapperRepository(ZembilContext context)
         {
@@ -97,6 +98,17 @@ namespace Zembil.Repositories
                     _locationRepository = new LocationRepository(_dbContext);
                 }
                 return _locationRepository;
+            }
+        }
+        public IAdsRepository AdsRepo
+        {
+            get
+            {
+                if (_adsRepository == null)
+                {
+                    _adsRepository = new AdsRepository(_dbContext);
+                }
+                return _adsRepository;
             }
         }
 

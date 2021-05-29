@@ -14,16 +14,16 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:51043"
+      "applicationUrl": "http://localhost:51043/"
     },
     "Zembil": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchUrl": "swagger/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:51043"
+      "applicationUrl": "http://localhost:51043/"
     }
   }
 }

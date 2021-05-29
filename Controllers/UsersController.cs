@@ -29,7 +29,7 @@ namespace Zembil.Controllers
             _accountService = accountService;
         }
 
-        [Authorize(Roles = "admin")]
+        [Route("users")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -40,7 +40,9 @@ namespace Zembil.Controllers
                 User currentUser = await _repoUser.UserRepo.Get(tokenid);
                 if (currentUser.Role.ToLower().Equals("admin"))
                 {
-                    return await _repoUser.UserRepo.GetAll();
+                    var users = await _repoUser.UserRepo.GetAll();
+                    var usersDto = _mapper.Map<List<User>>(users);
+                    return usersDto;
                 }
             }
 
@@ -52,6 +54,7 @@ namespace Zembil.Controllers
         public async Task<ActionResult<UserGetDto>> GetUser(int id)
         {
             string authHeader = Request.Headers["Authorization"];
+            if (authHeader == null) return Unauthorized();
             int tokenid = _accountService.Decrypt(authHeader);
 
             if (id != tokenid)
