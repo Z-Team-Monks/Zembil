@@ -29,7 +29,7 @@ namespace Zembil.Services
                 {
                     new Claim(ClaimTypes.Name, Convert.ToString(userid))
                 }),
-                Expires = DateTime.UtcNow.AddHours(10),
+                Expires = DateTime.UtcNow.AddDays(100),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenkey),
                     SecurityAlgorithms.HmacSha256Signature)
