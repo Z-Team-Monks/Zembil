@@ -81,6 +81,12 @@ namespace Zembil.Controllers
             var shop = await _repoProduct.ShopRepo.Get(product.ShopId);
             if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop 
 
+            var isProductValid = await ValidateProduct(product);
+            if (!isProductValid)
+            {
+                return BadRequest("Invalid Category");
+            }
+
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
             return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.ProductId }, NewProduct);
@@ -157,6 +163,17 @@ namespace Zembil.Controllers
             }
             var trendingProducts = await _repoProduct.ProductRepo.GetTrendingProducts(queryParams);
             return trendingProducts;
+        }
+
+        //will be moved later
+        private async Task<bool> ValidateProduct(ProductCreateDto newProduct)
+        {
+            var categories = await _repoProduct.CategoryRepo.GetAll();
+            if (!categories.Any(c => c.CategoryId == newProduct.CategoryId))
+            {
+                return false;
+            }
+            return true;
         }
 
         private async Task<User> getUserFromHeader(string authHeader)
