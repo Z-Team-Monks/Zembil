@@ -31,7 +31,7 @@ namespace Zembil.Controllers
 
         [Route("users")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserGetDto>>> GetUsers()
         {
             string authHeader = Request.Headers["Authorization"];
             if (authHeader != null)
@@ -39,10 +39,10 @@ namespace Zembil.Controllers
                 int tokenid = _accountService.Decrypt(authHeader);
                 User currentUser = await _repoUser.UserRepo.Get(tokenid);
                 if (currentUser.Role.ToLower().Equals("admin"))
-                {
+                {                    
                     var users = await _repoUser.UserRepo.GetAll();
-                    var usersDto = _mapper.Map<List<User>>(users);
-                    return usersDto;
+                    var usersDto = _mapper.Map<IEnumerable<UserGetDto>>(users);
+                    return Ok(usersDto);
                 }
             }
 
@@ -77,6 +77,7 @@ namespace Zembil.Controllers
             user.Password = _accountService.HashPassword(user.Password);
             user.Role = "user";
             var NewUser = await _repoUser.UserRepo.Add(user);
+            NewUser.DateAccountCreated = DateTime.Now;
             var userDTO = _mapper.Map<UserGetDto>(NewUser);
             return CreatedAtAction(nameof(GetUser), new { Id = userDTO.UserId }, userDTO);
         }
@@ -95,6 +96,7 @@ namespace Zembil.Controllers
                     user.Password = _accountService.HashPassword(user.Password);
                     user.Role = "admin";
                     var NewUser = await _repoUser.UserRepo.Add(user);
+                    NewUser.DateAccountCreated = DateTime.Now;
                     return CreatedAtAction(nameof(GetUser), new { Id = NewUser.UserId }, NewUser);
                 }
             }

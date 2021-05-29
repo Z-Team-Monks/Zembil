@@ -9,11 +9,6 @@ namespace Zembil.Models
     [Table("shops")]
     public class Shop
     {
-        public Shop()
-        {
-            IsApproved = false;
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShopId { get; set; }
@@ -45,9 +40,7 @@ namespace Zembil.Models
 
         [MaxLength(500)]
         public string Description { get; set; }
-
-
-        public bool IsApproved { get; set; }
+        public bool? IsActive { get; set; }
 
     }
 }

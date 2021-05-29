@@ -31,21 +31,47 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Category>> GetAllCategory()
+        public async Task<IEnumerable<Category>> GetAllCategory([FromQuery] QueryParams queryParams)
         {
             List<Category> Categories = await _repoCategory.CategoryRepo.GetAll();
             return Categories;
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<Category> AddCategory(Category Category)
+        public async Task<ActionResult<Category>> AddCategory(Category Category)
         {
 
             //TODO: add role auth here     only admins are allowed
-
+            var user = await getUserFromHeader(Request.Headers["Authorization"]);
+            const string admin = "admin";
+            if (user == null || user.Role.ToLower() != admin)
+            {
+                return Unauthorized();
+            }
             var category = await _repoCategory.CategoryRepo.Add(Category);
             return category;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Category>> DeleeteCategory(int id)
+        {
+
+            //only admins are allowed
+            var user = await getUserFromHeader(Request.Headers["Authorization"]);
+            const string admin = "admin";
+            if (user == null || user.Role.ToLower() != admin)
+            {
+                return Unauthorized();
+            }
+            var category = await _repoCategory.CategoryRepo.Delete(id);
+            return category;
+        }
+
+        private async Task<User> getUserFromHeader(string authHeader)
+        {
+            int tokenid = _accountServices.Decrypt(authHeader);
+            var userExists = await _repoCategory.UserRepo.Get(tokenid);
+            return userExists;
         }
     }
 }
