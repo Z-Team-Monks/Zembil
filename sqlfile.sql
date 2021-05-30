@@ -23,13 +23,13 @@
 -- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Linge','Linge@gmail.com','Linge123','+25112456312','user');
 
  --hashed password
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Niko','Niko@gmail.com','$2y$12$MHjsInAWVs6e9srMIe8.berYATsit0AMg6svyV9jp34kkR3eDmRUu','+25112435667','admin');
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Nati','Nati@gmail.com','$2y$12$Lon4fjpFVKy.6nJ8l7ZE.ObkngyG46Aj7drKg7m5A41D/haSaOfaC','+25134435667','user');
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Sura','Sura@gmail.com','$2y$12$iOo/h81pnUFPf41bxqgCXu4J1Y8VZpIf1NSL8d343lnAgTrksc9MS','+25112655667','user');
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Kidcore','Kid@gmail.com','$2y$12$p54nuOFAfTftrJv4Kal8zOUgw/bdVDuSNTnYQvZAwkx68BVa2W6mK','+25112435623','user');
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Shemsu','Shem@gmail.com','$2y$12$Bsfx621CbAx9VIzYGIoZnujP9tSjIQGHy6reumXciqk/ah/.D85Zm','+25156435667','user');
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Chachse','Chacha@gmail.com','$2y$12$ICZ8Y72ODlSptfY1rgsyze7ajrwLRPpA7kWUlRT6j9XTrwANtPT6S','+25112890667','user');
--- INSERT INTO users("Username","Email","Password","Phone","Role") VALUES ('Linge','Linge@gmail.com','$2y$12$vsZuaBf1y8tU5mnaFkq/ouSEjdVZQxmPkXHivbtM6rr0xhVH3i9sq','+25112456312','user');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Niko','Niko@gmail.com','$2y$12$MHjsInAWVs6e9srMIe8.berYATsit0AMg6svyV9jp34kkR3eDmRUu','+25112435667','admin');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Nati','Nati@gmail.com','$2y$12$Lon4fjpFVKy.6nJ8l7ZE.ObkngyG46Aj7drKg7m5A41D/haSaOfaC','+25134435667','user');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Sura','Sura@gmail.com','$2y$12$iOo/h81pnUFPf41bxqgCXu4J1Y8VZpIf1NSL8d343lnAgTrksc9MS','+25112655667','user');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Kidcore','Kid@gmail.com','$2y$12$p54nuOFAfTftrJv4Kal8zOUgw/bdVDuSNTnYQvZAwkx68BVa2W6mK','+25112435623','user');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Shemsu','Shem@gmail.com','$2y$12$Bsfx621CbAx9VIzYGIoZnujP9tSjIQGHy6reumXciqk/ah/.D85Zm','+25156435667','user');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Chachse','Chacha@gmail.com','$2y$12$ICZ8Y72ODlSptfY1rgsyze7ajrwLRPpA7kWUlRT6j9XTrwANtPT6S','+25112890667','user');
+-- INSERT INTO users("DateAccountCreated","Username","Email","Password","Phone","Role") VALUES ('2021-05-30','Linge','Linge@gmail.com','$2y$12$vsZuaBf1y8tU5mnaFkq/ouSEjdVZQxmPkXHivbtM6rr0xhVH3i9sq','+25112456312','user');
 
 -- location
 

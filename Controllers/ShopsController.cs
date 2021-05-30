@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -71,7 +73,7 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Shop>> DeleteShop(int id)
         {
             var result = await _repository.ShopRepo.Delete(id);
-            await _repository.LocationRepo.Delete(result.ShopLocationId);
+            await _repository.LocationRepo.Delete(result.ShopLocationDto.LocationId);
             return NoContent();
         }
 
@@ -106,25 +108,20 @@ namespace Zembil.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] ShopWithLocation shopWithLocation)
+        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] Shop shop)
         {
-            var shop = shopWithLocation.Shop;
-            var location = shopWithLocation.Location;
-
             var ShopExist = await _repository.ShopRepo.Get(id);
 
             if (ShopExist == null)
             {
                 return NotFound("No Shop found with that id!");
             }
-            if (location == null)
+            if (shop.ShopLocationDto == null)
             {
                 return BadRequest("Associated location is also required!");
             }
             shop.ShopId = id;
-            location.LocationId = shop.ShopLocationId;
             await _repository.ShopRepo.Update(shop);
-            await _repository.LocationRepo.Update(location);
             return Ok(shop);
         }
 
@@ -146,7 +143,15 @@ namespace Zembil.Controllers
             {
                 shop.OwnerId = tokenid;
                 shop.IsActive = null;
+
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+                var loc = geometryFactory.CreatePoint(new Coordinate(shop.ShopLocationDto.Latitude, shop.ShopLocationDto.Longitude));
+                var newLoc = new ShopLocation() { GeoLoacation = loc, LocationName = shop.ShopLocationDto.LocationName };
+
+                var newLocation = await _repository.LocationRepo.Add(newLoc);
+                shop.ShopLocationId = newLocation.LocationId;
                 var newShop = await _repository.ShopRepo.Add(shop);
+
                 return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
             }
             catch (Exception)

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using Zembil.DbContexts;
 using Zembil.Models;
 using Zembil.Utils;
+using Zembil.Views;
 
 namespace Zembil.Repositories
 {
@@ -18,7 +21,11 @@ namespace Zembil.Repositories
         }
         public async Task<Shop> GetShopWithLocation(int shopId)
         {
-            var shop = await _databaseContext.Set<Shop>().Include(s => s.ShopLocation).FirstAsync(x => x.ShopId == shopId);
+            var shop = await _databaseContext.Set<Shop>().FirstAsync(x => x.ShopId == shopId);
+            var location = await _databaseContext.Set<ShopLocation>().FirstAsync(x => x.LocationId == shop.ShopLocationId);
+            var locationDto = new LocationDto() { LocationId = location.LocationId, LocationName = location.LocationName, Longitude = location.GeoLoacation.Coordinate.Y, Latitude = location.GeoLoacation.Coordinate.X };
+            shop.ShopLocationDto = locationDto;
+            Console.WriteLine(locationDto.Latitude);
             return shop;
 
         }
@@ -89,8 +96,8 @@ namespace Zembil.Repositories
 
             string Building = queryParams.Building;
             string Name = queryParams.Name;
-            double radius = queryParams.NearByRadius;
             int Category = queryParams.Category;
+            NearByLocation shopLocation = queryParams.NearBy;
 
             if (!string.IsNullOrEmpty(Name))
             {
@@ -105,9 +112,16 @@ namespace Zembil.Repositories
             {
                 Shops = Shops.Where(x => x.CategoryId == Category).ToList();
             }
-            if (radius != 0.0)
+            if (shopLocation != null)
             {
+                var locationMaker = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+                var loc = locationMaker.CreatePoint(new Coordinate(shopLocation.Latitude, shopLocation.Longitude));
+                var nearLocations = await _databaseContext.Set<ShopLocation>()
+                                        .Select(t => new { Location = t, Distance = t.GeoLoacation.Distance(loc) })
+                                        .Where(x => x.Distance < shopLocation.Radius)
+                                        .OrderBy(x => x.Distance).Take(9).Select(x => x.Location).ToListAsync();
 
+                Shops = nearLocations.Select(x => Shops.Find(y => y.ShopLocationId == x.LocationId)).ToList();
             }
 
             return Shops;

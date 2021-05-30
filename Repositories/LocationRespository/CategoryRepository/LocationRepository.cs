@@ -8,7 +8,7 @@ using Zembil.Models;
 
 namespace Zembil.Repositories
 {
-    public class LocationRepository : RepositoryBase<Location>, ILocationRepository
+    public class LocationRepository : RepositoryBase<ShopLocation>, ILocationRepository
     {
         public LocationRepository(ZembilContext context) : base(context)
         {

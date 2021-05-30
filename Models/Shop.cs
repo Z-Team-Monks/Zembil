@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Zembil.Views;
 
 namespace Zembil.Models
 {
@@ -32,10 +32,11 @@ namespace Zembil.Models
         [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
 
-        [Required(ErrorMessage = "The associated location id is required")]
+        [Required(ErrorMessage = "Shop need to have location")]
         [ForeignKey("LocationId")]
         public int ShopLocationId { get; set; }
-        public Location ShopLocation { get; set; }
+        [NotMapped]
+        public LocationDto ShopLocationDto { get; set; }
 
         [MaxLength(500)]
         public string Description { get; set; }

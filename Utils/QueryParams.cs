@@ -19,12 +19,19 @@ namespace Zembil.Utils
     public class ShopSearchQuery : QuerySearchParams
     {
         public string Building { get; set; }
-        public double NearByRadius { get; set; }
+        public NearByLocation NearBy { get; set; }
     }
 
     public class TrendingQuery
     {
         public int Latest { get; set; }
         public int Popular { get; set; }
+    }
+
+    public class NearByLocation
+    {
+        public double Radius { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

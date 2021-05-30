@@ -33,8 +33,7 @@ namespace Zembil
         {
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
             services.AddScoped<IRepositoryWrapper, WrapperRepository>();
-            //services.AddDbContext<DbContexts.ZembilContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDbContext<DbContexts.ZembilContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            services.AddDbContext<DbContexts.ZembilContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), o => o.UseNetTopologySuite()).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             services.AddControllers();
             services.AddControllers().AddNewtonsoftJson();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -90,7 +89,7 @@ namespace Zembil
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

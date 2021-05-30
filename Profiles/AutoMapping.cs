@@ -33,6 +33,8 @@ namespace Zembil.Profiles
             CreateMap<ShopReturnDto, Shop>();
             CreateMap<List<Shop>, List<ShopReturnDto>>();
 
+            CreateMap<ShopLocation, LocationDto>();
+
             CreateMap<Shop, ShopDto>()
                 .ForMember(
                     dest => dest.Status,

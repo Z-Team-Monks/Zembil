@@ -5,7 +5,7 @@ using Zembil.Models;
 
 namespace Zembil.Repositories
 {
-    public interface ILocationRepository : IRepositoryBase<Location>
+    public interface ILocationRepository : IRepositoryBase<ShopLocation>
     {
     }
 }
