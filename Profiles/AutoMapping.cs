@@ -24,7 +24,18 @@ namespace Zembil.Profiles
             CreateMap<User, UserGetDto>();
             CreateMap<List<User>, List<UserGetDto>>();
 
+            CreateMap<ShopBatchGetDto, Shop>();
+            CreateMap<Shop,ShopBatchGetDto>()
+                .ForMember(
+                    dest => dest.Status,
+                    opt => opt.MapFrom(src => getStatusForShop(src.IsActive))); 
+
+            CreateMap<ShopCreateDto, Shop>();
+            CreateMap<Shop, ShopCreateDto>();
+
             CreateMap<Shop, ShopReturnDto>();
+
+            CreateMap<Shop, ShopDto>();
             CreateMap<ShopDto, Shop>();
 
             CreateMap<ShopChangeDto, Shop>();
@@ -39,6 +50,10 @@ namespace Zembil.Profiles
                     opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
 
             CreateMap<CategoryDto, Category>();
+
+            CreateMap<NewLocationDto, Location>();
+            CreateMap<Location,NewLocationDto>();
+
         }
 
         public string getStatusForShop(bool? isActive)

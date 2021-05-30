@@ -33,10 +33,10 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Shop>> GetShops([FromQuery] QueryFilterParams queryParams)
+        public async Task<IEnumerable<ShopBatchGetDto>> GetShops([FromQuery] QueryFilterParams queryParams)
         {
             var results = await _repository.ShopRepo.FilterProducts(queryParams);
-            var shops = _mapper.Map<List<Shop>>(results);
+            var shops = _mapper.Map<List<ShopBatchGetDto>>(results);
             return shops;
         }
 
@@ -52,24 +52,37 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Shop>> GetShop(int id)
+        public async Task<ActionResult<ShopDto>> GetShop(int id)
         {
             try
             {
                 var result = await _repository.ShopRepo.GetShopWithLocation(id);
                 if (result == null) return NotFound();
-                return result;
+                var shopDto = _mapper.Map<ShopDto>(result);
+                return shopDto;
             }
             catch (Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
-
-        [AllowAnonymous]
+        
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<Shop>> DeleteShop(int id)
+        public async Task<ActionResult> DeleteShop(int id)
         {
+            var userExists = getUserFromHeader(Request.Headers["Authorization"]);
+
+            if (userExists == null)
+            {
+                return Unauthorized();
+            }
+
+            var ShopExist = await _repository.ShopRepo.Get(id);
+            if (ShopExist == null)
+            {
+                return NotFound("No Shop found with that id for current user!");
+            }
+
             var result = await _repository.ShopRepo.Delete(id);
             await _repository.LocationRepo.Delete(result.ShopLocationId);
             return NoContent();
@@ -106,10 +119,9 @@ namespace Zembil.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] ShopWithLocation shopWithLocation)
+        public async Task<ActionResult<ShopDto>> UpdateFullShop(int id, [FromBody] ShopWithLocation shopWithLocation)
         {
-            var shop = shopWithLocation.Shop;
-            var location = shopWithLocation.Location;
+            var location = _mapper.Map<Location>(shopWithLocation.Location);
 
             var ShopExist = await _repository.ShopRepo.Get(id);
 
@@ -121,15 +133,17 @@ namespace Zembil.Controllers
             {
                 return BadRequest("Associated location is also required!");
             }
-            shop.ShopId = id;
-            location.LocationId = shop.ShopLocationId;
-            await _repository.ShopRepo.Update(shop);
+
+            _mapper.Map(shopWithLocation.Shop, ShopExist);            
+            location.LocationId = ShopExist.ShopLocationId;
+            //Console.WriteLine($"{ShopExist.ShopLocationId}");
             await _repository.LocationRepo.Update(location);
-            return Ok(shop);
+            await _repository.ShopRepo.Update(ShopExist);
+            return _mapper.Map<ShopDto>(ShopExist);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shop>> CreateShop(Shop shop)
+        public async Task<ActionResult<Shop>> CreateShop(ShopCreateDto shopDto)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
@@ -138,15 +152,17 @@ namespace Zembil.Controllers
 
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            if (shop == null)
+            if (shopDto == null)
             {
                 return BadRequest("shop can't be empty");
-            }
+            }            
+            var shopRepo = _mapper.Map<Shop>(shopDto);
+            shopRepo.OwnerId = tokenid;
+            shopRepo.IsActive = null;
+            shopRepo.ShopLocation = _mapper.Map<Location>(shopDto.ShopLocation);
             try
             {
-                shop.OwnerId = tokenid;
-                shop.IsActive = null;
-                var newShop = await _repository.ShopRepo.Add(shop);
+                var newShop = await _repository.ShopRepo.Add(shopRepo);
                 return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
             }
             catch (Exception)
@@ -155,14 +171,10 @@ namespace Zembil.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("{shopId:int}/follow")]
         public async Task<ActionResult> Getfollow(int shopId)
-        {
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountService.Decrypt(authHeader);
-
-            var userExists = await _repository.UserRepo.Get(tokenid);
-
+        {            
             var count = await _repository.ShopRepo.GetFollow(shopId);
             return Ok($"shop follow: {count}");
         }
