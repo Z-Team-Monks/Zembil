@@ -49,6 +49,17 @@ namespace Zembil.Profiles
                     dest => dest.Status,
                     opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
 
+            CreateMap<Product, ProductGetBatchDto>();
+            CreateMap<ProductGetBatchDto,Product>();
+
+            CreateMap<Product, ProductUpdateDto>();
+            CreateMap<ProductUpdateDto,Product>();
+
+            CreateMap<ProductDto, Product>();
+            CreateMap<Product, ProductDto>();
+
+
+
             CreateMap<CategoryDto, Category>();
 
             CreateMap<NewLocationDto, Location>();
