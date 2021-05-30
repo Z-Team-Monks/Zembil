@@ -67,7 +67,7 @@ namespace Zembil.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] IFormFile file)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] IFormFile file = null)
         {
 
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);

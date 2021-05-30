@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -126,7 +127,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shop>> CreateShop(Shop shop)
+        public async Task<ActionResult<Shop>> CreateShop(Shop shop, [FromForm] IFormFile file = null)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
@@ -141,6 +142,22 @@ namespace Zembil.Controllers
             }
             try
             {
+
+                if (file != null)
+                {
+                    var size = file.Length;
+                    Console.WriteLine($"File upload size: {size}");
+                    var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/", file.FileName);
+                    if (file.Length > 0)
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                            shop.CoverImage = filePath;
+                        }
+                    }
+                }
+
                 shop.OwnerId = tokenid;
                 shop.IsActive = null;
 
@@ -158,6 +175,8 @@ namespace Zembil.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
+
+
         }
 
         [HttpGet("{shopId:int}/follow")]

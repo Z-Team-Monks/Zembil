@@ -60,7 +60,10 @@ namespace Zembil
             });
 
             // add cors policy
-            services.AddCors(options => options.AddPolicy("AllowAll", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+            services.AddCors(options => options.AddPolicy("AllowEverything", builder => builder.AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()));
 
             var tokenKey = Configuration.GetValue<string>("TokenKey");
             var key = "this is my custom Secret key for authnetication";
@@ -105,7 +108,7 @@ namespace Zembil
             // custom exception handler registration
             app.ConfigureCustomExceptionMiddleware();
 
-            app.UseCors("AllowAll");
+            app.UseCors("AllowEverything");
 
             app.UseHttpsRedirection();
 
