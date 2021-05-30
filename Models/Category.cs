@@ -14,6 +14,6 @@ namespace Zembil.Models
 
         [Required]
         [MaxLength(200)]
-        public string Category_name { get; set; }
+        public string CategoryName { get; set; }
     }
 }

@@ -37,6 +37,8 @@ namespace Zembil.Profiles
                 .ForMember(
                     dest => dest.Status,
                     opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+
+            CreateMap<CategoryDto, Category>();
         }
 
         public string getStatusForShop(bool? isActive)

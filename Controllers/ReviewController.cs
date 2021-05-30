@@ -31,7 +31,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Review>> AddReview(int id, Review review)
+        public async Task<ActionResult<Review>> AddReview(int id, ReviewDto reviewDto)
         {
             // can't give multiple review for same product
             var productExist = await _repoReview.ProductRepo.Get(id);
@@ -44,13 +44,13 @@ namespace Zembil.Controllers
             {
                 throw new CustomAppException(new ErrorDetail() { Status = "fail", StatusCode = (int)HttpStatusCode.BadRequest, Message = "User Already gave review for the product!" });
             }
-
-            review.UserId = userExists.UserId;
-            review.ProductId = id;
-
-            var reviewForRepo = _mapper.Map<Review>(review);
-            await _repoReview.ReviewRepo.Add(review);
-            return Ok(review);
+  
+            var reviewForRepo = _mapper.Map<Review>(reviewDto);
+            reviewForRepo.UserId = userExists.UserId;
+            reviewForRepo.ProductId = id;
+            reviewForRepo.ReviewDate = DateTime.Now;
+            await _repoReview.ReviewRepo.Add(reviewForRepo);            
+            return Ok(reviewForRepo); // created at here
         }
 
         [AllowAnonymous]

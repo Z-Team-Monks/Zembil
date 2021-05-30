@@ -38,7 +38,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Category>> AddCategory(Category Category)
+        public async Task<ActionResult<Category>> AddCategory(CategoryDto categoryDto)
         {
 
             //TODO: add role auth here     only admins are allowed
@@ -48,12 +48,14 @@ namespace Zembil.Controllers
             {
                 return Unauthorized();
             }
-            var category = await _repoCategory.CategoryRepo.Add(Category);
-            return category;
+
+            var categoryRepo = _mapper.Map<Category>(categoryDto);
+            await _repoCategory.CategoryRepo.Add(categoryRepo);
+            return Ok(categoryRepo);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Category>> DeleeteCategory(int id)
+        public async Task<ActionResult<Category>> DeleteCategory(int id)
         {
 
             //only admins are allowed
