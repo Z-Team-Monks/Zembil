@@ -58,12 +58,18 @@ namespace Zembil.Profiles
             CreateMap<ProductDto, Product>();
             CreateMap<Product, ProductDto>();
 
-
-
             CreateMap<CategoryDto, Category>();
+            CreateMap<Category,CategoryDto>();
 
             CreateMap<NewLocationDto, Location>();
             CreateMap<Location,NewLocationDto>();
+
+            CreateMap<WishListAddDto, WishListItem>();
+            CreateMap<WishListItem, WishListAddDto>();
+
+            CreateMap<WishListDto, WishListItem>();
+            CreateMap<WishListItem,WishListDto>();
+
 
         }
 

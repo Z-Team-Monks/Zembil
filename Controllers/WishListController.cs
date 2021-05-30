@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Views;
 
 namespace Zembil.Controllers
 {
@@ -27,13 +28,20 @@ namespace Zembil.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WishListItem>>> GetCart()
+        public async Task<ActionResult<IEnumerable<WishListDto>>> GetCart()
         {
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
 
             var cart = await _repoCart.WishListRepo.GetCart(user.UserId);
-            return Ok(cart);
+            var cartDto = _mapper.Map<IEnumerable<WishListDto>>(cart);
+            foreach(var wishItem in cartDto)
+            {
+                var product = await _repoCart.ProductRepo.Get(wishItem.ProductId);
+                wishItem.Product = _mapper.Map<ProductGetBatchDto>(product);
+            }
+
+            return Ok(cartDto);
         }
 
         [HttpGet("{Id}")]
@@ -49,15 +57,16 @@ namespace Zembil.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<WishListItem>> AddToCart(WishListItem wishListItem)
+        public async Task<ActionResult<WishListItem>> AddToCart(WishListAddDto wishListItemDto)
         {
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
 
-            wishListItem.UserId = user.UserId;
-            wishListItem.DateAdded = DateTime.Now;
-            await _repoCart.WishListRepo.Add(wishListItem);
-            return CreatedAtAction(nameof(GetCartItem), new { Id = wishListItem.WishListItemId }, wishListItem);
+            var wishListRepo = _mapper.Map<WishListItem>(wishListItemDto);
+            wishListRepo.UserId = user.UserId;
+            wishListRepo.DateAdded = DateTime.Now;
+            await _repoCart.WishListRepo.Add(wishListRepo);
+            return CreatedAtAction(nameof(GetCartItem), new { Id = wishListRepo.WishListItemId }, wishListRepo);
         }
 
         [HttpDelete("{id}")]
