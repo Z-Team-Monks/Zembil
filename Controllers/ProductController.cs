@@ -42,24 +42,17 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _repoProduct.ProductRepo.GetProductWithReviewes(id);
-            // List<Review> reviews = await _repoProduct.ReviewRepo.GetReviewesOfProduct(id);
             if (product == null)
             {
                 return NotFound();
             }
-            // List<Review> productReview = await _repoProduct.ReviewRepo.GetReviewesOfProduct(product.ProductId);
-            // int totalRating = productReview.Count();
-            // // int c = productReview.Select(x => x.Rating).Sum();
-            // int ratingCount = productReview.Sum(item => item.Rating);
-            // product.ProductReviews = reviews;
             return product;
-            // return Ok(new { Rating = reviews, Product = product });
         }
 
         [AllowAnonymous]
         [HttpGet]
         [HttpHead]
-        public async Task<IEnumerable<Product>> GetProducts([FromQuery] QueryParams queryParams)
+        public async Task<IEnumerable<Product>> GetProducts([FromQuery] QueryFilterParams queryParams)
         {
             List<Product> products;
             Console.WriteLine($"run");
@@ -74,7 +67,7 @@ namespace Zembil.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] List<IFormFile> files = null)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] IFormFile file)
         {
 
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
@@ -92,31 +85,27 @@ namespace Zembil.Controllers
                 return BadRequest("Invalid Category");
             }
 
+            // upload image if exists
+            if (file != null)
+            {
+                var size = file.Length;
+                Console.WriteLine($"File upload size: {size}");
+                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/", file.FileName);
+                if (file.Length > 0)
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                        shop.CoverImage = filePath;
+                    }
+                }
+            }
+
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
 
             return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.ProductId }, NewProduct);
         }
-
-        [Route("uploads")]
-        [HttpPost]
-        public async Task<ActionResult<Product>> UploadProductImage([FromForm] IFormFile file)
-        {
-            // file upload
-            var size = file.Length;
-            Console.WriteLine($"File upload size: {size}");
-            var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/", file.FileName);
-            if (file.Length > 0)
-            {
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            }
-
-            return CreatedAtAction(nameof(UploadProductImage), new { Images = file.FileName, Size = size, filePath });
-        }
-
 
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] JsonPatchDocument<Product> product)
@@ -159,25 +148,6 @@ namespace Zembil.Controllers
             product.ProductId = id;
             await _repoProduct.ProductRepo.Update(product);
             return Ok(product);
-        }
-
-        [HttpPost("{id}/reviewes")]
-        public async Task<ActionResult<Review>> AddReview(int id, Review review)
-        {
-
-            var productExist = await _repoProduct.ProductRepo.Get(id);
-            var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-
-            if (productExist == null) return NotFound("No product found with that id!");
-            if (userExists == null) return NotFound("User doesn't Exist");
-
-            review.UserId = userExists.UserId;
-            review.ProductId = id;
-
-
-            await _repoProduct.ReviewRepo.Add(review);
-            var reviewForRepo = _mapper.Map<Review>(review);
-            return Ok(reviewForRepo);
         }
 
         [HttpGet("trending")]

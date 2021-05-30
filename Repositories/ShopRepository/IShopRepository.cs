@@ -11,8 +11,8 @@ namespace Zembil.Repositories
         public Task RetractFollow(int userid, int shopId);
         public bool FollowExists(int userid, int shopId);
         Task<int> GetFollow(int shopId);
-        Task<List<Shop>> FilterProducts(QueryParams queryParams);
-        Task<List<Shop>> SearchShops(QueryParams queryParams);
+        Task<List<Shop>> FilterProducts(QueryFilterParams queryParams);
+        Task<List<Shop>> SearchShops(ShopSearchQuery queryParams);
         Task<Shop> GetShopWithLocation(int shopId);
         Task<List<Product>> GetAllProductsOfShop(int shopId);
         Task<List<Shop>> GetShopsByOwner(int ownerId);

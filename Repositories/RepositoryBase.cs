@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Zembil.DbContexts;
-
+using Zembil.Utils;
 
 namespace Zembil.Repositories
 {
@@ -55,6 +55,43 @@ namespace Zembil.Repositories
             await _databaseContext.SaveChangesAsync();
             return entity;
         }
+
+        public async Task<List<T>> FilterModels(QueryFilterParams queryParams)
+        {
+            List<T> models = await _databaseContext.Set<T>().ToListAsync();
+            int TotalItems = models.Count();
+            Console.WriteLine($"total: {TotalItems}");
+
+            int Limit = queryParams.Limit;
+            int Pagination = queryParams.Pagination;
+
+
+            Console.WriteLine($"Limit: {Limit} pagination: {Pagination}");
+            if (Limit <= 0)
+            {
+                Limit = 10;
+            }
+            if (Pagination <= 0)
+            {
+                Pagination = 1;
+            }
+
+            var startIndex = (Pagination - 1) * Limit;
+            var count = TotalItems - startIndex;
+            var endIndex = Limit < count ? Limit : count;
+
+            if (Limit < TotalItems && startIndex < TotalItems)
+            {
+                models = models.GetRange(startIndex, endIndex);
+
+            }
+            else if (Limit < TotalItems)
+            {
+                models = models.GetRange(0, Limit);
+            }
+            return models;
+        }
+
 
     }
 }

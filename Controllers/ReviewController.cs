@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -32,18 +34,21 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Review>> AddReview(int id, Review review)
         {
             // can't give multiple review for same product
-
-
             var productExist = await _repoReview.ProductRepo.Get(id);
             var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
 
             if (productExist == null) return NotFound("No product found with that id!");
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            // review.UserId = userExists.UserId;
-            // review.ProductId = id;
+            if (await _repoReview.ReviewRepo.GetRevieweByUserAndProduct(id, userExists.UserId) != null)
+            {
+                throw new CustomAppException(new ErrorDetail() { Status = "fail", StatusCode = (int)HttpStatusCode.BadRequest, Message = "User Already gave review for the product!" });
+            }
 
-            // var reviewForRepo = _mapper.Map<Review>(review);
+            review.UserId = userExists.UserId;
+            review.ProductId = id;
+
+            var reviewForRepo = _mapper.Map<Review>(review);
             await _repoReview.ReviewRepo.Add(review);
             return Ok(review);
         }
@@ -70,7 +75,7 @@ namespace Zembil.Controllers
         [HttpGet("{reviewId}")]
         public async Task<ActionResult> GetReview(int reviewId)
         {
-            var reviewExists = await _repoReview.ReviewRepo.Get(reviewId);
+            var reviewExists = await _repoReview.ReviewRepo.GetRevieweById(reviewId);
             if (reviewExists == null)
             {
                 return NotFound("No Review found with that id!");

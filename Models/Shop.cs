@@ -23,8 +23,7 @@ namespace Zembil.Models
         [MaxLength(50)]
         public string PhoneNumber1 { get; set; }
 
-        [MaxLength(50)]
-        public string PhoneNumber2 { get; set; }
+        public string CoverImage { get; set; }
 
         [Required]
         [ForeignKey("UserId")]

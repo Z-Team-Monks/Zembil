@@ -32,7 +32,7 @@ namespace Zembil.Controllers
         [AllowAnonymous]
         [Route("products")]
         [HttpGet]
-        public async Task<IEnumerable<Product>> GetProducts([FromQuery] QueryParams queryParams)
+        public async Task<IEnumerable<Product>> GetProducts([FromQuery] ProductSearchQuery queryParams)
         {
             List<Product> products;
             Console.WriteLine($"run");
@@ -48,7 +48,7 @@ namespace Zembil.Controllers
         [AllowAnonymous]
         [Route("shops")]
         [HttpGet]
-        public async Task<IEnumerable<Shop>> GetShops([FromQuery] QueryParams queryParams)
+        public async Task<IEnumerable<Shop>> GetShops([FromQuery] ShopSearchQuery queryParams)
         {
             List<Shop> shops;
             Console.WriteLine($"run");

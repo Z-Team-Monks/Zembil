@@ -62,38 +62,14 @@ namespace Zembil.Repositories
             var followToRetract = _databaseContext.ShopFollow.SingleOrDefault(s => s.ShopId == shopId && s.UserId == userid);
             return followToRetract == null ? false : true;
         }
-        public async Task<List<Shop>> FilterProducts(QueryParams queryParams)
+        public async Task<List<Shop>> FilterProducts(QueryFilterParams queryParams)
         {
-            List<Shop> shops = await _databaseContext.Set<Shop>().ToListAsync();
-            int TotalshopsCount = shops.Count();
-            Console.WriteLine($"total: {TotalshopsCount}");
+            List<Shop> shops = await FilterModels(queryParams);
 
-            int Limit = queryParams.Limit;
             string Sort = queryParams.Sort;
-            int Pagination = queryParams.Pagination;
-            Console.WriteLine($"Limit: {Limit} sort: {Sort} pagination: {Pagination}");
-            if (Limit <= 0)
-            {
-                Limit = 10;
-            }
-            if (Pagination <= 0)
-            {
-                Pagination = 1;
-            }
 
-            var startIndex = (Pagination - 1) * Limit;
-            var count = TotalshopsCount - startIndex;
-            var endIndex = Limit < count ? Limit : count;
+            Console.WriteLine($"sort: {Sort}");
 
-            if (Limit < TotalshopsCount && startIndex < TotalshopsCount)
-            {
-                shops = shops.GetRange(startIndex, endIndex);
-
-            }
-            else if (Limit < TotalshopsCount)
-            {
-                shops = shops.GetRange(0, Limit);
-            }
             if (!string.IsNullOrEmpty(Sort))
             {
                 if (Sort.ToLower().Equals("name"))
@@ -105,16 +81,33 @@ namespace Zembil.Repositories
             return shops;
         }
 
-        public async Task<List<Shop>> SearchShops(QueryParams queryParams)
+        public async Task<List<Shop>> SearchShops(ShopSearchQuery queryParams)
         {
             List<Shop> Shops = await _databaseContext.Set<Shop>().ToListAsync();
             int TotalShopsCount = Shops.Count();
             Console.WriteLine($"total: {TotalShopsCount}");
-            string Building = queryParams.BuildingName;
+
+            string Building = queryParams.Building;
+            string Name = queryParams.Name;
+            double radius = queryParams.NearByRadius;
+            int Category = queryParams.Category;
+
+            if (!string.IsNullOrEmpty(Name))
+            {
+                Shops = Shops.Where(p => p.ShopName.ToLower().StartsWith(Name.ToLower())).ToList();
+            }
 
             if (!string.IsNullOrEmpty(Building))
             {
                 Shops = Shops.Where(p => p.BuildingName.ToLower().Contains(Building.ToLower())).ToList();
+            }
+            if (Category != 0)
+            {
+                Shops = Shops.Where(x => x.CategoryId == Category).ToList();
+            }
+            if (radius != 0.0)
+            {
+
             }
 
             return Shops;

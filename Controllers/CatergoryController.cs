@@ -31,7 +31,7 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Category>> GetAllCategory([FromQuery] QueryParams queryParams)
+        public async Task<IEnumerable<Category>> GetAllCategory()
         {
             List<Category> Categories = await _repoCategory.CategoryRepo.GetAll();
             return Categories;

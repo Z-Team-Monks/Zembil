@@ -21,7 +21,7 @@ namespace Zembil.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "0:yyy-MM-dd", ApplyFormatInEditMode = true)]
         public DateTime DateInserted { get; set; }
-        
+
         public string Brand { get; set; }
         public string Description { get; set; }
 

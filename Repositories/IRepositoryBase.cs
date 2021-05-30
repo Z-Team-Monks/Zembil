@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Zembil.Utils;
 
 namespace Zembil.Repositories
 {
@@ -13,5 +14,7 @@ namespace Zembil.Repositories
         Task<T> Add(T entity);
         Task<T> Update(T entity);
         Task<T> Delete(int id);
+        // Task<List<T>> FilterModels(QueryFilterParams queryParams);
+
     }
 }

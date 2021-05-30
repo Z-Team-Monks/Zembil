@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Controllers
@@ -32,9 +33,9 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Shop>> GetShops()
+        public async Task<IEnumerable<Shop>> GetShops([FromQuery] QueryFilterParams queryParams)
         {
-            var results = await _repository.ShopRepo.GetAll();
+            var results = await _repository.ShopRepo.FilterProducts(queryParams);
             var shops = _mapper.Map<List<Shop>>(results);
             return shops;
         }
@@ -76,8 +77,8 @@ namespace Zembil.Controllers
 
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Shop>> UpdateShop(int id, [FromBody] JsonPatchDocument<ShopChangeDto> shopChangeDto)
-        {            
-            var userExists = getUserFromHeader(Request.Headers["Authorization"]);            
+        {
+            var userExists = getUserFromHeader(Request.Headers["Authorization"]);
 
             if (userExists == null)
             {
@@ -86,12 +87,12 @@ namespace Zembil.Controllers
 
             //use this dto inorder not to accept status updates in this route
             ShopChangeDto updatedDto;
-            var ShopExist = await _repository.ShopRepo.Get(id);                        
+            var ShopExist = await _repository.ShopRepo.Get(id);
 
             if (ShopExist == null || ShopExist.ShopId != userExists.Id)
             {
                 return NotFound("No Shop found with that id for current user!");
-            }            
+            }
             else
             {
                 updatedDto = _mapper.Map<ShopChangeDto>(ShopExist);
@@ -110,7 +111,7 @@ namespace Zembil.Controllers
             var shop = shopWithLocation.Shop;
             var location = shopWithLocation.Location;
 
-            var ShopExist = await _repository.ShopRepo.Get(id);            
+            var ShopExist = await _repository.ShopRepo.Get(id);
 
             if (ShopExist == null)
             {
