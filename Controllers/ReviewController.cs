@@ -66,6 +66,7 @@ namespace Zembil.Controllers
             {
                 UserId = shopExists.OwnerId,
                 NotificationMessage = $"{userExists.Username} reviewed {productExist.ProductName} from your shop {shopExists.ShopName}.",
+                NotificationType = "New Review",
                 Seen = false,
             };
 
@@ -116,8 +117,7 @@ namespace Zembil.Controllers
         [HttpPut("{reviewId}")]
         public async Task<ActionResult<ReviewToReturnDto>> UpdateReview(int reviewId, [FromBody] ReviewToUpdateDto reviewDto)
         {
-            var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-            if (userExists == null) return NotFound("User doesn't Exist");
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);            
 
             var reviewExists = await _repoReview.ReviewRepo.Get(reviewId);
             if (reviewExists == null)

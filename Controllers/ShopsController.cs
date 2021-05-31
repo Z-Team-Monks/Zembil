@@ -248,6 +248,16 @@ namespace Zembil.Controllers
             }
 
             shopRepo.IsActive = shopStatus.IsActive;
+            var notificationType = shopStatus.IsActive ? "Approved" : "Declined";
+
+            var newNotification = new Notification
+            {
+                UserId = shopRepo.OwnerId,
+                NotificationMessage = $"Your application for {shopRepo.ShopName} got {notificationType}.",
+                NotificationType = notificationType,
+                Seen = false,
+            };
+
             await _repository.ShopRepo.Update(shopRepo);
             return Ok(shopRepo);
         }       

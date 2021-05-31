@@ -107,6 +107,7 @@ namespace Zembil.Controllers
                 {
                     UserId = user.UserId,
                     NotificationMessage = $"{shopExists.ShopName} added new product {product.ProductName}",
+                    NotificationType = "New Product",
                     Seen = false,
                 };
                 await _repoProduct.NotificationRepo.Add(newNotification);
