@@ -52,5 +52,18 @@ namespace Zembil.Controllers
             }
             return Ok(notificationDtos);
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> ClearNotifications()
+        {
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            var notifications = await _repoNotification.NotificationRepo.GetUserNotifications(userExists.UserId);
+
+            foreach(var notification in notifications)
+            {
+                await _repoNotification.NotificationRepo.Delete(notification.NotificatoinId);
+            }
+            return Ok();            
+        }
     }
 }

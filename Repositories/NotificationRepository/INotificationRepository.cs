@@ -9,5 +9,6 @@ namespace Zembil.Repositories
     public interface INotificationRepository : IRepositoryBase<Notification>
     {
         Task<IEnumerable<Notification>> GetUserNotifications(int userid);
+        //Task DeleteAllNotificatoins(int userId);
     }
 }
