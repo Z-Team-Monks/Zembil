@@ -63,7 +63,7 @@ namespace Zembil.Controllers
                 var result = await _repository.ShopRepo.GetShopWithLocation(id);
                 if (result == null)
                 {
-                    throw new CustomAppException(new ErrorDetail() {StatusCode = 404,Message = "Shop Doesn't Exist", Status = "Fail" });
+                    throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
                 }
                 return result;
             }
@@ -78,7 +78,7 @@ namespace Zembil.Controllers
         public async Task<ActionResult<Shop>> DeleteShop(int id)
         {
             var result = await _repository.ShopRepo.Delete(id);
-            await _repository.LocationRepo.Delete(result.ShopLocationDto.LocationId);
+            await _repository.LocationRepo.Delete(result.ShopLocation.LocationId);
             return NoContent();
         }
 
@@ -90,17 +90,17 @@ namespace Zembil.Controllers
             if (userExists == null)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "You are not authorized for this action!", Status = "fail" });
-            }        
+            }
 
             //use this dto inorder not to accept status updates in this route
             ShopChangeDto updatedDto;
             var ShopExist = await _repository.ShopRepo.Get(id);
-            if(ShopExist == null)
+            if (ShopExist == null)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
-            if ( ShopExist.ShopId != userExists.Id)
+            if (ShopExist.ShopId != userExists.Id)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this shop", Status = "Fail" });  //Not your shop
             }
@@ -123,9 +123,9 @@ namespace Zembil.Controllers
 
             if (ShopExist == null)
             {
-                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });  
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
-            if (shop.ShopLocationDto == null)
+            if (shop.ShopLocation == null)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Associated location is also required!", Status = "Fail" });
             }
@@ -140,7 +140,7 @@ namespace Zembil.Controllers
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
 
-            var userExists = await _repository.UserRepo.Get(tokenid);          
+            var userExists = await _repository.UserRepo.Get(tokenid);
 
             if (shopCreateDto == null)
             {
@@ -169,7 +169,7 @@ namespace Zembil.Controllers
                 shop.IsActive = null;
 
                 var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-                var loc = geometryFactory.CreatePoint(new Coordinate(shop.ShopLocationDto.Latitude, shop.ShopLocationDto.Longitude));
+                var loc = geometryFactory.CreatePoint(new Coordinate(shop.ShopLocation.Latitude, shop.ShopLocation.Longitude));
                 var newLoc = new ShopLocation() { GeoLoacation = loc, LocationName = shopCreateDto.ShopLocationDto.LocationName };
 
                 var newLocation = await _repository.LocationRepo.Add(newLoc);

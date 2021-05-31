@@ -24,7 +24,7 @@ namespace Zembil.Repositories
             var shop = await _databaseContext.Set<Shop>().FirstAsync(x => x.ShopId == shopId);
             var location = await _databaseContext.Set<ShopLocation>().FirstAsync(x => x.LocationId == shop.ShopLocationId);
             var locationDto = new LocationDto() { LocationId = location.LocationId, LocationName = location.LocationName, Longitude = location.GeoLoacation.Coordinate.Y, Latitude = location.GeoLoacation.Coordinate.X };
-            shop.ShopLocationDto = locationDto;
+            shop.ShopLocation = locationDto;
             Console.WriteLine(locationDto.Latitude);
             return shop;
 

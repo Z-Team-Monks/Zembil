@@ -12,7 +12,7 @@ namespace Zembil.Views
         public int ProductId { get; set; }
         public string UserName { get; set; }
         public int Rating { get; set; }
-        public string ReviewString { get; set; }
+        public string Comment { get; set; }
         public DateTime ReviewDate { get; set; }
     }
 }

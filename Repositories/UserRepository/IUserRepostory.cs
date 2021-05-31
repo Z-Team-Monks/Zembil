@@ -7,5 +7,6 @@ namespace Zembil.Repositories
 {
     public interface IUserRepository : IRepositoryBase<User>
     {
+        Task<Object> GetZembilStatus();
     }
 }

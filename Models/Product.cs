@@ -27,6 +27,7 @@ namespace Zembil.Models
 
         [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
+        public Category ProductCategory { get; set; }
 
         [Required]
         public int Price { get; set; }

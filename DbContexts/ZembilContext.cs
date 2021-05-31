@@ -30,6 +30,13 @@ namespace Zembil.DbContexts
             modelBuilder.HasPostgresExtension("postgis");
             modelBuilder.Entity<Review>()
               .HasKey(r => new { r.ProductId, r.UserId });
+            modelBuilder.Entity<Category>().HasData(
+                   new Category
+                   {
+                       CategoryId = 1,
+                       CategoryName = "Other"
+                   }
+               );
             modelBuilder.Entity<User>().HasData(
                    new User
                    {
