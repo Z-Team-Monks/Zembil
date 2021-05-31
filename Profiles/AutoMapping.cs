@@ -12,6 +12,9 @@ namespace Zembil.Profiles
     {
         public AutoMapping()
         {
+            CreateMap<User, UserCreateDto>();
+            CreateMap<UserCreateDto,User>();
+
             CreateMap<Product, ProductCreateDto>();
             CreateMap<ProductCreateDto, Product>();
             CreateMap<ReviewDto, Review>()
@@ -39,6 +42,12 @@ namespace Zembil.Profiles
                 .ForMember(
                     dest => dest.Status,
                     opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+
+            CreateMap<AdsCreateDto, Ads>();
+            CreateMap<Ads,AdsCreateDto>();
+
+            CreateMap<NewLocationDto, LocationDto>();
+            CreateMap<LocationDto,NewLocationDto>();
         }
 
         public string getStatusForShop(bool? isActive)

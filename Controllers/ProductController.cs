@@ -162,7 +162,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Product>> UpdateFullProduct(int id, [FromBody] ProductUpdateDto productUpdateDto)
+        public async Task<ActionResult<ProductDto>> UpdateFullProduct(int id, [FromBody] ProductUpdateDto productUpdateDto)
         {
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
@@ -174,7 +174,7 @@ namespace Zembil.Controllers
 
             _mapper.Map(productUpdateDto, productExist);
             await _repoProduct.ProductRepo.Update(productExist);
-            return productExist;
+            return _mapper.Map<ProductDto>(productExist);
         }
 
         [AllowAnonymous]

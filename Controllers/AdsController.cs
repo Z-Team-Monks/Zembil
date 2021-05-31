@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Views;
 
 namespace Zembil.Controllers
 {
@@ -28,7 +29,7 @@ namespace Zembil.Controllers
 
         [Route("user")]
         [HttpPost]
-        public async Task<ActionResult<Ads>> CreateAds([FromBody] Ads newAds)
+        public async Task<ActionResult<Ads>> CreateAds([FromBody] AdsCreateDto newAds)
         {
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
@@ -40,8 +41,8 @@ namespace Zembil.Controllers
 
             if (myShops.Count() == 0) return BadRequest("Can't run adds on unavailable shops");
 
-            var ads = await _repoAds.AdsRepo.Add(newAds);
-
+            var ads = _mapper.Map<Ads>(newAds);
+            await _repoAds.AdsRepo.Add(ads);
             return Ok(ads);
         }
 
@@ -49,7 +50,7 @@ namespace Zembil.Controllers
         [HttpGet]
         public async Task<IEnumerable<Ads>> GetAllAds()
         {
-            var allAds = await _repoAds.AdsRepo.GetAll();
+            var allAds = await _repoAds.AdsRepo.GetAdsWithShops();            
             return allAds;
         }
 

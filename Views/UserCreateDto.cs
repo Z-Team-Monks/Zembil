@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace Zembil.Views
 {
-    public class UserGetDto
-    {
-        public int UserId { get; set; }
+    public class UserCreateDto
+    {        
         public string Username { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
         public string Phone { get; set; }
-        public DateTime DateAccountCreated { get; set; }
+        public string Password { get; set; }        
     }
 }
