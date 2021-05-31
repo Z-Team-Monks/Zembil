@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using Newtonsoft.Json;
 using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
@@ -137,7 +139,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shop>> CreateShop(ShopCreateDto shopCreateDto, [FromForm] IFormFile file = null)
+        public async Task<ActionResult<Shop>> CreateShop([FromBody] ShopCreateDto shopCreateDto)
         {
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
@@ -147,22 +149,6 @@ namespace Zembil.Controllers
             }
             try
             {
-
-                if (file != null)
-                {
-                    var size = file.Length;
-                    Console.WriteLine($"File upload size: {size}");
-                    var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/", file.FileName);
-                    if (file.Length > 0)
-                    {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
-                            shopCreateDto.CoverImage = filePath;
-                        }
-                    }
-                }
-
                 var shop = _mapper.Map<Shop>(shopCreateDto);
                 shop.OwnerId = userExists.UserId;
                 shop.IsActive = null;
@@ -181,8 +167,45 @@ namespace Zembil.Controllers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
+        }
 
+        [HttpPost("uploads")]
+        public async Task<ActionResult<Shop>> ShopUploads([FromQuery] int id, [FromForm] IFormFile file)
+        {
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            var shop = await _repository.ShopRepo.Get(id);
+            if (shop == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "No shop found with that id!", Status = "fail" });
+            }
+            if (shop.OwnerId != userExists.UserId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Shop doesn't belong to this user!", Status = "fail" });
+            }
+            if (file == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "File is empty!", Status = "fail" });
+            }
+            try
+            {
+                var size = file.Length;
+                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/Shops", file.FileName);
+                shop.CoverImage = filePath;
+                if (file.Length > 0)
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
 
+                        await file.CopyToAsync(stream);
+                        await _repository.ShopRepo.Update(shop);
+                    }
+                }
+                return CreatedAtAction(nameof(ShopUploads), new { Id = shop.ShopId }, shop);
+            }
+            catch (Exception)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 500, Message = "Unable to upload file! please try again", Status = "error" });
+            }
         }
 
         [HttpGet("{shopId:int}/follow")]

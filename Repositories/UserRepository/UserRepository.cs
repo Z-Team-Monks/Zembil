@@ -20,14 +20,16 @@ namespace Zembil.Repositories
             var usersCount = await _databaseContext.Set<User>().CountAsync();
             var productsPerCategory = await _databaseContext.Set<Product>()
                                 .Include(x => x.ProductCategory)
-                                .GroupBy(x => x.ProductCategory)
-                                .Select(x => new { Category = x.Key, ProductAmount = x.Count() }).ToListAsync();
+                                .ToListAsync();
+
+            var productsByCategory = productsPerCategory.GroupBy(x => x.ProductCategory)
+                                .Select(x => new { Category = x.Key.CategoryName, ProductCount = x.Count() }).ToList();
             var adsCount = await _databaseContext.Set<Ads>().CountAsync();
             var status = new
             {
                 shopsCount,
                 usersCount,
-                productsPerCategory,
+                productsByCategory,
                 adsCount
             };
 

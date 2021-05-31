@@ -80,7 +80,7 @@ namespace Zembil.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] IFormFile file = null)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product)
         {
             var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
@@ -93,7 +93,7 @@ namespace Zembil.Controllers
             var shop = await _repoProduct.ShopRepo.Get(product.ShopId);
             if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop 
 
-            var isProductValid = await _helperMethods.ValidateProduct(_repoProduct,product);
+            var isProductValid = await _helperMethods.ValidateProduct(_repoProduct, product);
             if (!isProductValid)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Invalid Category", Status = "Fail" });
@@ -113,29 +113,58 @@ namespace Zembil.Controllers
                 await _repoProduct.NotificationRepo.Add(newNotification);
             }
 
-
-            // upload image if exists
-            if (file != null)
-            {
-                var size = file.Length;
-                Console.WriteLine($"File upload size: {size}");
-                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/", file.FileName);
-                if (file.Length > 0)
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                        shop.CoverImage = filePath;
-                    }
-                }
-            }
-
             var productrepo = _mapper.Map<Product>(product);
             var NewProduct = await _repoProduct.ProductRepo.Add(productrepo);
 
             return CreatedAtAction(nameof(GetProduct), new { Id = NewProduct.ProductId }, NewProduct);
         }
+        [HttpPost("uploads")]
+        public async Task<ActionResult<Product>> ProductUploads([FromQuery] int shopid, [FromQuery] int productId, [FromForm] IFormFile file)
+        {
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            var shop = await _repoProduct.ShopRepo.Get(shopid);
+            var Product = await _repoProduct.ProductRepo.Get(productId);
+            if (Product == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "No Product found with that id!", Status = "fail" });
+            }
+            if (shop == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "No Shop found with that id!", Status = "fail" });
+            }
+            if (shop.OwnerId != userExists.UserId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Shop doesn't belong to this user!", Status = "fail" });
+            }
+            if (Product.ShopId != shop.ShopId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "This shop does not have product with that id!", Status = "fail" });
+            }
+            if (file == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "File is empty!", Status = "fail" });
+            }
+            try
+            {
+                var size = file.Length;
+                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/Products", file.FileName);
+                Product.ImageUrl = filePath;
+                if (file.Length > 0)
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
 
+                        await file.CopyToAsync(stream);
+                        await _repoProduct.ProductRepo.Update(Product);
+                    }
+                }
+                return CreatedAtAction(nameof(ProductUploads), new { Id = Product.ProductId }, Product);
+            }
+            catch (Exception)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 500, Message = "Unable to upload file! please try again", Status = "error" });
+            }
+        }
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] JsonPatchDocument<Product> product)
         {
@@ -172,7 +201,7 @@ namespace Zembil.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductDto>> UpdateFullProduct(int id, [FromBody] ProductUpdateDto productUpdateDto)
         {
-            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);            
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
 
@@ -187,7 +216,7 @@ namespace Zembil.Controllers
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
-            if(shopExists.OwnerId != user.UserId)
+            if (shopExists.OwnerId != user.UserId)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this product", Status = "Fail" });//Not your shop
             }
@@ -208,6 +237,6 @@ namespace Zembil.Controllers
             }
             var trendingProducts = await _repoProduct.ProductRepo.GetTrendingProducts(queryParams);
             return _mapper.Map<IEnumerable<ProductGetBatchDto>>(trendingProducts);
-        }                       
+        }
     }
 }
