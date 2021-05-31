@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Controllers
@@ -20,22 +21,22 @@ namespace Zembil.Controllers
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repoNotification;
         private readonly IAccountService _accountService;
+        private readonly HelperMethods _helperMethods;
+
         public NotificationController(IRepositoryWrapper repoWrapper, IAccountService accountService, IMapper mapper)
         {
             _mapper = mapper;
             _repoNotification = repoWrapper;
             _accountService = accountService;
+            _helperMethods = HelperMethods.getInstance(repoWrapper, _accountService);
+
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NotificationDto>>> GetNotifications()
         {
-            var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-
-            if (userExists == null)
-            {
-                return Unauthorized();
-            }
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+ 
             var notifications = await _repoNotification.NotificationRepo.GetUserNotifications(userExists.UserId);            
             var notificationDtos = new List<NotificationDto>();
 
@@ -50,14 +51,6 @@ namespace Zembil.Controllers
                 await _repoNotification.NotificationRepo.Update(notification);
             }
             return Ok(notificationDtos);
-        }
-
-
-        private async Task<User> getUserFromHeader(string authHeader)
-        {
-            int tokenid = _accountService.Decrypt(authHeader);
-            var userExists = await _repoNotification.UserRepo.Get(tokenid);
-            return userExists;
         }
     }
 }

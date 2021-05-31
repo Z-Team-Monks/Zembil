@@ -28,14 +28,14 @@ namespace Zembil.Controllers
         private IRepositoryWrapper _repoProduct;
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly HelperMethods _helperMethods;
 
         public ProductsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             _repoProduct = repoWrapper;
             _accountServices = accountServices;
             _mapper = mapper;
-            _hostingEnvironment = hostingEnvironment;
+            _helperMethods = HelperMethods.getInstance(repoWrapper, accountServices);
         }
 
         [AllowAnonymous]
@@ -82,6 +82,7 @@ namespace Zembil.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] ProductCreateDto product, [FromForm] IFormFile file = null)
         {
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
             if (shopExists == null)
@@ -89,13 +90,10 @@ namespace Zembil.Controllers
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
-            var user = await getUserFromHeader(Request.Headers["Authorization"]);
-            if (user == null) return Unauthorized();
-
             var shop = await _repoProduct.ShopRepo.Get(product.ShopId);
             if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop 
 
-            var isProductValid = await ValidateProduct(product);
+            var isProductValid = await _helperMethods.ValidateProduct(_repoProduct,product);
             if (!isProductValid)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Invalid Category", Status = "Fail" });
@@ -140,8 +138,7 @@ namespace Zembil.Controllers
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] JsonPatchDocument<Product> product)
         {
-            var user = await getUserFromHeader(Request.Headers["Authorization"]);
-            if (user == null) return Unauthorized();
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
 
@@ -153,7 +150,7 @@ namespace Zembil.Controllers
             var shopExists = await _repoProduct.ShopRepo.Get(productExist.ShopId);
             if (shopExists == null)
             {
-                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
             var shop = await _repoProduct.ShopRepo.Get(productExist.ShopId);
@@ -174,12 +171,24 @@ namespace Zembil.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductDto>> UpdateFullProduct(int id, [FromBody] ProductUpdateDto productUpdateDto)
         {
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);            
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
 
             if (productExist == null)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
+            }
+
+            var shopExists = await _repoProduct.ShopRepo.Get(productExist.ShopId);
+            if (shopExists == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
+            }
+
+            if(shopExists.OwnerId != user.UserId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this product", Status = "Fail" });//Not your shop
             }
 
             _mapper.Map(productUpdateDto, productExist);
@@ -198,25 +207,6 @@ namespace Zembil.Controllers
             }
             var trendingProducts = await _repoProduct.ProductRepo.GetTrendingProducts(queryParams);
             return _mapper.Map<IEnumerable<ProductGetBatchDto>>(trendingProducts);
-        }
-
-        //will be moved later
-        private async Task<bool> ValidateProduct(ProductCreateDto newProduct)
-        {
-            var categories = await _repoProduct.CategoryRepo.GetAll();
-            if (!categories.Any(c => c.CategoryId == newProduct.CategoryId))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private async Task<User> getUserFromHeader(string authHeader)
-        {
-            int tokenid = _accountServices.Decrypt(authHeader);
-            var userExists = await _repoProduct.UserRepo.Get(tokenid);
-            return userExists;
-        }
-
+        }                       
     }
 }

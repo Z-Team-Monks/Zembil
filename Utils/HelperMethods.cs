@@ -1,8 +1,10 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Views;
 
 namespace Zembil.Utils
 {
@@ -64,6 +66,16 @@ namespace Zembil.Utils
                 case false:
                     return "Declined";
             }
+        }
+
+        public async Task<bool> ValidateProduct(IRepositoryWrapper repoWrapper,ProductCreateDto newProduct)
+        {
+            var categories = await repoWrapper.CategoryRepo.GetAll();
+            if (!categories.Any(c => c.CategoryId == newProduct.CategoryId))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

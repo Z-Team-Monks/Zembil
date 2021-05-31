@@ -10,6 +10,7 @@ using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Controllers
@@ -22,12 +23,14 @@ namespace Zembil.Controllers
         private IRepositoryWrapper _repoReview { get; set; }
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
+        private readonly HelperMethods _helperMethods;
 
         public ReviewController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper)
         {
             _repoReview = repoWrapper;
             _accountServices = accountServices;
             _mapper = mapper;
+            _helperMethods = HelperMethods.getInstance(repoWrapper, accountServices);
         }
 
         [HttpPost]
@@ -35,7 +38,7 @@ namespace Zembil.Controllers
         {
             // can't give multiple review for same product
             var productExist = await _repoReview.ProductRepo.Get(id);
-            var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             var shopExists = await _repoReview.ShopRepo.Get(productExist.ShopId);
 
             if (productExist == null)
@@ -46,9 +49,7 @@ namespace Zembil.Controllers
             if(shopExists == null)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
-            }
-
-            if (userExists == null) return NotFound("User doesn't Exist");
+            }            
 
             if (await _repoReview.ReviewRepo.GetRevieweByUserAndProduct(id, userExists.UserId) != null)
             {
@@ -79,7 +80,10 @@ namespace Zembil.Controllers
         public async Task<ActionResult<IEnumerable<Review>>> GetReviewesOfAProduct(int id)
         {
             var productExist = await _repoReview.ProductRepo.Get(id);
-            if (productExist == null) return NotFound("No product found with that id!");
+            if (productExist == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
+            }
 
             var reviewesFromRepo = await _repoReview.ReviewRepo.GetReviewesOfProduct(id);
             var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
@@ -140,8 +144,7 @@ namespace Zembil.Controllers
         [HttpDelete("{reviewId}")]
         public async Task<ActionResult> DeleteAReview(int reviewId)//reviewid
         {
-            var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-            if (userExists == null) return NotFound("User doesn't Exist");
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
             var reviewExists = await _repoReview.ReviewRepo.Get(reviewId);
             if (reviewExists == null)
@@ -155,13 +158,6 @@ namespace Zembil.Controllers
             }
             await _repoReview.ReviewRepo.Delete(reviewId);
             return Ok();
-        }
-
-        private async Task<User> getUserFromHeader(string authHeader)
-        {
-            int tokenid = _accountServices.Decrypt(authHeader);
-            var userExists = await _repoReview.UserRepo.Get(tokenid);
-            return userExists;
         }
     }
 }

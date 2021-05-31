@@ -27,12 +27,14 @@ namespace Zembil.Controllers
         private readonly IRepositoryWrapper _repository;
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
+        private readonly HelperMethods _helperMethods;
 
         public ShopsController(IRepositoryWrapper repository, IAccountService accountService, IMapper mapper)
         {
             _repository = repository;
             _accountService = accountService;
             _mapper = mapper;
+            _helperMethods = HelperMethods.getInstance(repository, accountService);
         }
 
         [AllowAnonymous]
@@ -47,11 +49,11 @@ namespace Zembil.Controllers
         [AllowAnonymous]
         [Route("{id:int}/products")]
         [HttpGet]
-        public async Task<IEnumerable<Product>> GetProductsOfShop(int id)
+        public async Task<IEnumerable<ProductGetBatchDto>> GetProductsOfShop(int id)
         {
             var results = await _repository.ShopRepo.GetAllProductsOfShop(id);
             var products = _mapper.Map<List<Product>>(results);
-            return products;
+            return _mapper.Map<IEnumerable<ProductGetBatchDto>>(products);
         }
 
         [AllowAnonymous]
@@ -85,12 +87,7 @@ namespace Zembil.Controllers
         [HttpPatch("{id:int}")]
         public async Task<ActionResult<Shop>> UpdateShop(int id, [FromBody] JsonPatchDocument<ShopChangeDto> shopChangeDto)
         {
-            var userExists = getUserFromHeader(Request.Headers["Authorization"]);
-
-            if (userExists == null)
-            {
-                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "You are not authorized for this action!", Status = "fail" });
-            }        
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
             //use this dto inorder not to accept status updates in this route
             ShopChangeDto updatedDto;
@@ -100,15 +97,14 @@ namespace Zembil.Controllers
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
-            if ( ShopExist.ShopId != userExists.Id)
+            if ( ShopExist.ShopId != userExists.UserId)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this shop", Status = "Fail" });  //Not your shop
             }
             else
             {
                 updatedDto = _mapper.Map<ShopChangeDto>(ShopExist);
-                shopChangeDto.ApplyTo(updatedDto);
-                //ShopChangeDto.ApplyTo(shopChangeDto, ModelState);
+                shopChangeDto.ApplyTo(updatedDto);                
             }
 
             ShopExist = _mapper.Map<Shop>(updatedDto);
@@ -119,11 +115,17 @@ namespace Zembil.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Shop>> UpdateFullShop(int id, [FromBody] Shop shop)
         {
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+
             var ShopExist = await _repository.ShopRepo.Get(id);
 
             if (ShopExist == null)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });  
+            }
+            if(ShopExist.OwnerId != userExists.UserId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this shop", Status = "Fail" });  //Not your shop
             }
             if (shop.ShopLocationDto == null)
             {
@@ -137,10 +139,7 @@ namespace Zembil.Controllers
         [HttpPost]
         public async Task<ActionResult<Shop>> CreateShop(ShopCreateDto shopCreateDto, [FromForm] IFormFile file = null)
         {
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountService.Decrypt(authHeader);
-
-            var userExists = await _repository.UserRepo.Get(tokenid);          
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
             if (shopCreateDto == null)
             {
@@ -165,7 +164,7 @@ namespace Zembil.Controllers
                 }
 
                 var shop = _mapper.Map<Shop>(shopCreateDto);
-                shop.OwnerId = tokenid;
+                shop.OwnerId = userExists.UserId;
                 shop.IsActive = null;
 
                 var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
@@ -189,11 +188,6 @@ namespace Zembil.Controllers
         [HttpGet("{shopId:int}/follow")]
         public async Task<ActionResult> Getfollow(int shopId)
         {
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountService.Decrypt(authHeader);
-
-            var userExists = await _repository.UserRepo.Get(tokenid);
-
             var count = await _repository.ShopRepo.GetFollow(shopId);
             return Ok($"shop follow: {count}");
         }
@@ -201,10 +195,7 @@ namespace Zembil.Controllers
         [HttpPost("{shopId:int}/follow")]
         public async Task<ActionResult> FollowShop(int shopId)
         {
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountService.Decrypt(authHeader);
-
-            var userExists = await _repository.UserRepo.Get(tokenid);
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             var followExists = _repository.ShopRepo.FollowExists(userExists.UserId, shopId);
 
             if (userExists == null) return NotFound("User doesn't Exist");
@@ -215,7 +206,7 @@ namespace Zembil.Controllers
 
             ShopFollow shopFollow = new ShopFollow
             {
-                UserId = tokenid,
+                UserId = userExists.UserId,
                 ShopId = shopId
             };
 
@@ -226,17 +217,14 @@ namespace Zembil.Controllers
         [HttpDelete("{shopId:int}/follow")]
         public async Task<ActionResult> RetractFollow(int shopId)
         {
-            string authHeader = Request.Headers["Authorization"];
-            int tokenid = _accountService.Decrypt(authHeader);
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
-            var userExists = await _repository.UserRepo.Get(tokenid);
             var followExists = _repository.ShopRepo.FollowExists(userExists.UserId, shopId);
 
             if (!followExists)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Current User doesn't follow this shop!", Status = "Fail" });
-            }
-            //if (userExists == null) return NotFound("User doesn't Exist");            
+            }            
 
             await _repository.ShopRepo.RetractFollow(userExists.UserId, shopId);
             return Ok();
@@ -245,11 +233,12 @@ namespace Zembil.Controllers
         [HttpPut("{shopId:int}/status")]
         public async Task<ActionResult> ChangeStatus(int shopId, [FromBody] ShopStatusDto shopStatus)
         {
-            var user = await getUserFromHeader(Request.Headers["Authorization"]);
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             const string admin = "admin";
-            if (user == null || user.Role.ToLower() != admin)
+
+            if (userExists.Role.ToLower() != admin)
             {
-                return Unauthorized();
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify status", Status = "Fail" });
             }
 
             var shopRepo = await _repository.ShopRepo.Get(shopId);
@@ -261,13 +250,6 @@ namespace Zembil.Controllers
             shopRepo.IsActive = shopStatus.IsActive;
             await _repository.ShopRepo.Update(shopRepo);
             return Ok(shopRepo);
-        }
-
-        private async Task<User> getUserFromHeader(string authHeader)
-        {
-            int tokenid = _accountService.Decrypt(authHeader);
-            var userExists = await _repository.UserRepo.Get(tokenid);
-            return userExists;
-        }
+        }       
     }
 }

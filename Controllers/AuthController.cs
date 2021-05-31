@@ -24,8 +24,6 @@ namespace Zembil.Controllers
             if (token == null)
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Wrong user credentials!", Status = "fail" });
 
-
-
             var authDto = new AuthDto
             {
                 token = token

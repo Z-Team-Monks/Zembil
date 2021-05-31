@@ -9,6 +9,7 @@ using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Controllers
@@ -21,11 +22,14 @@ namespace Zembil.Controllers
         private IRepositoryWrapper _repoAds;
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
+        private readonly HelperMethods _helperMethods;
+
         public AdsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper)
         {
             _repoAds = repoWrapper;
             _accountServices = accountServices;
             _mapper = mapper;
+            _helperMethods = HelperMethods.getInstance(repoWrapper, accountServices);
         }
 
 
@@ -33,9 +37,7 @@ namespace Zembil.Controllers
         [HttpPost]
         public async Task<ActionResult<Ads>> CreateAds([FromBody] AdsCreateDto newAds)
         {
-            var user = await getUserFromHeader(Request.Headers["Authorization"]);
-            // if (user == null) return Unauthorized();
-            // throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Wrong user credentials!", Status = "fail" });
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);            
             var ownerShops = await _repoAds.ShopRepo.GetShopsByOwner(user.UserId);
             if (ownerShops == null) throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Wrong shop! Cannot advertize shop that doen't belong to this user.", Status = "fail" });
 
@@ -86,7 +88,7 @@ namespace Zembil.Controllers
         [HttpPut]
         public async Task<ActionResult<Ads>> ApproveAds([FromBody] Ads ads)
         {
-            User user = await getUserFromHeader(Request.Headers["Authorization"]);
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             // if (user == null) return Unauthorized();
 
             if (user.Role != "admin") throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Admin access required!", Status = "fail" });
@@ -100,7 +102,7 @@ namespace Zembil.Controllers
         [HttpDelete]
         public async Task<ActionResult<Ads>> DisapproveAds([FromBody] Ads ads)
         {
-            User user = await getUserFromHeader(Request.Headers["Authorization"]);
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             // if (user == null) return Unauthorized();
 
             if (user.Role != "admin") throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Admin access required!", Status = "fail" });
@@ -109,19 +111,7 @@ namespace Zembil.Controllers
             var newAds = await _repoAds.AdsRepo.Update(ads);
 
             return Ok(newAds);
-        }
-
-
-        private async Task<User> getUserFromHeader(string authHeader)
-        {
-            int tokenid = _accountServices.Decrypt(authHeader);
-            var userExists = await _repoAds.UserRepo.Get(tokenid);
-            if (userExists == null)
-            {
-                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "You are not authorized for this action!", Status = "fail" });
-            }
-            return userExists;
-        }
+        }        
 
     }
 }
