@@ -40,7 +40,7 @@ namespace Zembil.Controllers
                 int tokenid = _accountService.Decrypt(authHeader);
                 User currentUser = await _repoUser.UserRepo.Get(tokenid);
                 if (currentUser.Role.ToLower().Equals("admin"))
-                {                       
+                {
                     var users = await _repoUser.UserRepo.GetAll();
                     var usersDto = _mapper.Map<IEnumerable<UserGetDto>>(users);
                     return Ok(usersDto);
@@ -79,7 +79,7 @@ namespace Zembil.Controllers
             user.Password = _accountService.HashPassword(user.Password);
             user.Role = "user";
             user.DateAccountCreated = DateTime.Now;
-            await _repoUser.UserRepo.Add(user);            
+            await _repoUser.UserRepo.Add(user);
             var userDTO = _mapper.Map<UserGetDto>(user);
             return CreatedAtAction(nameof(GetUser), new { Id = userDTO.UserId }, userDTO);
         }

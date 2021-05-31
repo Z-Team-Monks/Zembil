@@ -58,7 +58,7 @@ namespace Zembil.Controllers
 
             var productDto = _mapper.Map<ProductDto>(product);
             productDto.ProductReviews = reviewesToReturn;
-            return productDto;            
+            return productDto;
         }
 
         [AllowAnonymous]

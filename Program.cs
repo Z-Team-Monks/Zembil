@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Zembil
 {
@@ -13,7 +7,9 @@ namespace Zembil
     {
         public static void Main(string[] args)
         {
+
             CreateHostBuilder(args).Build().Run();
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -21,6 +17,7 @@ namespace Zembil
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    // webBuilder.UseKestrel().UseUrls("http://localhost:5566", "http://10.6.196.207:5599").UseIISIntegration().UseStartup<Startup>();
                 });
     }
 }

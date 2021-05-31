@@ -34,4 +34,6 @@ namespace Zembil.Utils
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
+
+
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zembil.Models;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Profiles
@@ -13,7 +14,7 @@ namespace Zembil.Profiles
         public AutoMapping()
         {
             CreateMap<User, UserCreateDto>();
-            CreateMap<UserCreateDto,User>();
+            CreateMap<UserCreateDto, User>();
 
             CreateMap<Product, ProductCreateDto>();
             CreateMap<ProductCreateDto, Product>();
@@ -33,6 +34,15 @@ namespace Zembil.Profiles
             CreateMap<ShopChangeDto, Shop>();
             CreateMap<Shop, ShopChangeDto>();
 
+            CreateMap<ShopCreateDto, Shop>();
+            CreateMap<Shop, ShopCreateDto>();
+
+            CreateMap<ShopBatchGetDto, Shop>();
+            CreateMap<Shop, ShopBatchGetDto>()
+                .ForMember(
+                    dest => dest.Status,
+                    opt => opt.MapFrom(src => HelperMethods.getInstanceEmpty().getStatusForShop(src.IsActive)));
+
             CreateMap<ShopReturnDto, Shop>();
             CreateMap<List<Shop>, List<ShopReturnDto>>();
 
@@ -41,26 +51,37 @@ namespace Zembil.Profiles
             CreateMap<Shop, ShopDto>()
                 .ForMember(
                     dest => dest.Status,
-                    opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+                    opt => opt.MapFrom(src => HelperMethods.getInstanceEmpty().getStatusForShop(src.IsActive)));
 
             CreateMap<AdsCreateDto, Ads>();
-            CreateMap<Ads,AdsCreateDto>();
+            CreateMap<Ads, AdsCreateDto>();
 
             CreateMap<NewLocationDto, LocationDto>();
-            CreateMap<LocationDto,NewLocationDto>();
-        }
+            CreateMap<LocationDto, NewLocationDto>();
 
-        public string getStatusForShop(bool? isActive)
-        {
-            switch (isActive)
-            {
-                case null:
-                    return "Pending";
-                case true:
-                    return "Approved";
-                case false:
-                    return "Declined";
-            }
+            CreateMap<Product, ProductGetBatchDto>();
+            CreateMap<ProductGetBatchDto, Product>();
+
+            CreateMap<Product, ProductUpdateDto>();
+            CreateMap<ProductUpdateDto, Product>();
+
+            CreateMap<ProductDto, Product>();
+            CreateMap<Product, ProductDto>();
+
+            CreateMap<CategoryDto, Category>();
+            CreateMap<Category, CategoryDto>();
+
+            CreateMap<NewLocationDto, ShopLocation>();
+            CreateMap<ShopLocation, NewLocationDto>();
+
+            CreateMap<WishListAddDto, WishListItem>();
+            CreateMap<WishListItem, WishListAddDto>();
+
+            CreateMap<WishListDto, WishListItem>();
+            CreateMap<WishListItem, WishListDto>();
+
+            CreateMap<Notification, NotificationDto>();
+            CreateMap<NotificationDto, Notification>();
         }
     }
 }

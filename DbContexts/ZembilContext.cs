@@ -27,20 +27,20 @@ namespace Zembil.DbContexts
         {
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
 
-            //modelBuilder.HasPostgresExtension("postgis");
-            //modelBuilder.Entity<Review>()
-            //   .HasKey(r => new { r.ProductId, r.UserId });
-            //modelBuilder.Entity<User>().HasData(
-            //        new User
-            //        {
-            //            UserId = 1,
-            //            Username = "Kidus",
-            //            Email = "se.kidus.yoseph@gmail.com",
-            //            Password = "$2a$11$iIJq.LUUPeCxoG9gNKL6uuUbcXTjeQapIUgSB5k4kXx5iKgGiSt4q",
-            //            Role = "Admin",
-            //            Phone = "+251972476097"
-            //        }
-            //    );
+            modelBuilder.HasPostgresExtension("postgis");
+            modelBuilder.Entity<Review>()
+              .HasKey(r => new { r.ProductId, r.UserId });
+            modelBuilder.Entity<User>().HasData(
+                   new User
+                   {
+                       UserId = 1,
+                       Username = "Kidus",
+                       Email = "se.kidus.yoseph@gmail.com",
+                       Password = "$2a$11$iIJq.LUUPeCxoG9gNKL6uuUbcXTjeQapIUgSB5k4kXx5iKgGiSt4q",
+                       Role = "Admin",
+                       Phone = "+251972476097"
+                   }
+               );
 
             //modelBuilder.Entity<Category>().HasData(
             //        new Category
@@ -48,7 +48,7 @@ namespace Zembil.DbContexts
             //            CategoryId = 1,
             //            CategoryName = "Electrnoics"
             //        }
-                );
+            // );
             // modelBuilder.Entity<ShopLocation>().HasData(
             //             new ShopLocation
             //             {

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -20,12 +21,14 @@ namespace Zembil.Controllers
         private IRepositoryWrapper _repoCategory { get; set; }
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
+        private readonly HelperMethods _helperMethods;
 
         public CategoryController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper)
         {
             _repoCategory = repoWrapper;
             _accountServices = accountServices;
             _mapper = mapper;
+            _helperMethods = HelperMethods.getInstance(repoWrapper, accountServices);
         }
 
 
@@ -38,17 +41,17 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Category>> AddCategory(Category Category)
+        public async Task<ActionResult<Category>> AddCategory(CategoryDto categoryDto)
         {
 
             //TODO: add role auth here     only admins are allowed
-            var user = await getUserFromHeader(Request.Headers["Authorization"]);
-            const string admin = "admin";
-            if (user == null || user.Role.ToLower() != admin)
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            if (user.Role.ToLower() != "admin")
             {
-                return Unauthorized();
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Admin access required!", Status = "fail" });
             }
-            var category = await _repoCategory.CategoryRepo.Add(Category);
+            var category = _mapper.Map<Category>(categoryDto);
+            await _repoCategory.CategoryRepo.Add(category);
             return category;
         }
 
@@ -57,21 +60,13 @@ namespace Zembil.Controllers
         {
 
             //only admins are allowed
-            var user = await getUserFromHeader(Request.Headers["Authorization"]);
-            const string admin = "admin";
-            if (user == null || user.Role.ToLower() != admin)
+            var user = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            if (user.Role.ToLower() != "admin")
             {
-                return Unauthorized();
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Admin access required!", Status = "fail" });
             }
             var category = await _repoCategory.CategoryRepo.Delete(id);
             return category;
-        }
-
-        private async Task<User> getUserFromHeader(string authHeader)
-        {
-            int tokenid = _accountServices.Decrypt(authHeader);
-            var userExists = await _repoCategory.UserRepo.Get(tokenid);
-            return userExists;
         }
     }
 }
