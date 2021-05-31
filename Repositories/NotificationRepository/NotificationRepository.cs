@@ -17,13 +17,9 @@ namespace Zembil.Repositories
 
         public async Task<IEnumerable<Notification>> GetUserNotifications(int userId)
         {
-            var following = await _databaseContext.Set<Notification>().ToListAsync();
-            following = following.Where(n => n.UserId == userId).ToList();
-            return following;
-            //var notifications = await _databaseContext.Set<Notification>().ToListAsync();
-            //var userNotifications = notifications.Where(n => n.UserId == userId);
-            //return userNotifications;
+            var notifications = await _databaseContext.Set<Notification>().ToListAsync();
+            notifications = notifications.Where(n => n.UserId == userId).ToList();
+            return notifications;            
         }
-
     }
 }
