@@ -45,20 +45,31 @@ namespace Zembil.Controllers
                 var usersDto = _mapper.Map<IEnumerable<UserGetDto>>(users);
                 return Ok(usersDto);
             }
-            
+
             throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Not authorized for this user", Status = "Fail" });
 
         }
 
-        [HttpGet("users/{id}")]
-        public async Task<ActionResult<UserGetDto>> GetUser(int id)
+        [HttpGet("me")]
+        public async Task<ActionResult<UserGetDto>> GetMe()
         {
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
-            return _mapper.Map<UserGetDto>(userExists);
+            Console.WriteLine("before");
+            var user = await _repoUser.UserRepo.Get(userExists.UserId);
+            Console.WriteLine("after");
+            return _mapper.Map<UserGetDto>(user);
+        }
+
+        [HttpGet("user/shops")]
+        public async Task<ActionResult<ShopReturnDto>> GetUserShops(int id)
+        {
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            var shops = await _repoUser.ShopRepo.GetShopsByOwner(userExists.UserId);
+            return _mapper.Map<ShopReturnDto>(shops);
         }
 
         [AllowAnonymous]
-        [HttpPost("users")]
+        [HttpPost("user")]
         public async Task<ActionResult<User>> CreateUser([FromBody] UserCreateDto userCreteDto)
         {
             var user = _mapper.Map<User>(userCreteDto);
@@ -67,7 +78,7 @@ namespace Zembil.Controllers
             user.DateAccountCreated = DateTime.Now;
             await _repoUser.UserRepo.Add(user);
             var userDTO = _mapper.Map<UserGetDto>(user);
-            return CreatedAtAction(nameof(GetUser), new { Id = userDTO.UserId }, userDTO);
+            return CreatedAtAction(nameof(CreateUser), new { Id = userDTO.UserId }, userDTO);
         }
 
         [HttpPost("admin")]
@@ -85,7 +96,7 @@ namespace Zembil.Controllers
                     user.Role = "admin";
                     var NewUser = await _repoUser.UserRepo.Add(user);
                     NewUser.DateAccountCreated = DateTime.Now;
-                    return CreatedAtAction(nameof(GetUser), new { Id = NewUser.UserId }, NewUser);
+                    return CreatedAtAction(nameof(CreateAdmin), new { Id = NewUser.UserId }, NewUser);
                 }
             }
 
@@ -109,18 +120,18 @@ namespace Zembil.Controllers
             throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Not authorized for this user", Status = "Fail" });
         }
 
-        [HttpPut("users/{id}")]
-        public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
+        [HttpPut("user")]
+        public async Task<ActionResult<User>> UpdateUser([FromBody] User user)
         {
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
-            if(userExists.UserId != id)
+            user.UserId = userExists.UserId;
+            try
             {
-                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Not authorized for this user", Status = "Fail" });
-            }
-            else
-            {
-                user.UserId = id;
                 await _repoUser.UserRepo.Update(user);
+            }
+            catch (System.Exception)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 500, Message = "Error, cannot update user! please make sure you are logged in", Status = "Fail" });
             }
             return NoContent();
         }

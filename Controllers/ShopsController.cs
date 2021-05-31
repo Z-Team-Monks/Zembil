@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
@@ -30,12 +31,14 @@ namespace Zembil.Controllers
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
         private readonly HelperMethods _helperMethods;
+        private readonly IConfiguration _configuration;
 
-        public ShopsController(IRepositoryWrapper repository, IAccountService accountService, IMapper mapper)
+        public ShopsController(IConfiguration configuration, IRepositoryWrapper repository, IAccountService accountService, IMapper mapper)
         {
             _repository = repository;
             _accountService = accountService;
             _mapper = mapper;
+            _configuration = configuration;
             _helperMethods = HelperMethods.getInstance(repository, accountService);
         }
 
@@ -169,8 +172,8 @@ namespace Zembil.Controllers
             }
         }
 
-        [HttpPost("uploads")]
-        public async Task<ActionResult<Shop>> ShopUploads([FromQuery] int id, [FromForm] IFormFile file)
+        [HttpPost("{id}/uploads")]
+        public async Task<ActionResult<Shop>> ShopUploads(int id, [FromForm] IFormFile file)
         {
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             var shop = await _repository.ShopRepo.Get(id);
@@ -189,8 +192,11 @@ namespace Zembil.Controllers
             try
             {
                 var size = file.Length;
-                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/Shops", file.FileName);
-                shop.CoverImage = filePath;
+                var place = _configuration["UploadFolderPath"] + "/shops/";
+                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + place, file.FileName);
+                shop.CoverImage = place + file.FileName.Trim().Replace(" ", "_");
+                Console.WriteLine("here: " + shop.CoverImage);
+
                 if (file.Length > 0)
                 {
                     using (var stream = new FileStream(filePath, FileMode.Create))

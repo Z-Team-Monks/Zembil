@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Zembil.ErrorHandler;
 using Zembil.Models;
@@ -29,12 +30,14 @@ namespace Zembil.Controllers
         private readonly IAccountService _accountServices;
         private readonly IMapper _mapper;
         private readonly HelperMethods _helperMethods;
+        private readonly IConfiguration _configuration;
 
-        public ProductsController(IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper, IWebHostEnvironment hostingEnvironment)
+        public ProductsController(IConfiguration configuration, IRepositoryWrapper repoWrapper, IAccountService accountServices, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             _repoProduct = repoWrapper;
             _accountServices = accountServices;
             _mapper = mapper;
+            _configuration = configuration;
             _helperMethods = HelperMethods.getInstance(repoWrapper, accountServices);
         }
 
@@ -121,6 +124,10 @@ namespace Zembil.Controllers
         [HttpPost("uploads")]
         public async Task<ActionResult<Product>> ProductUploads([FromQuery] int shopid, [FromQuery] int productId, [FromForm] IFormFile file)
         {
+            if (shopid == 0 || productId == 0)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Both shop and product id are required!", Status = "fail" });
+            }
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             var shop = await _repoProduct.ShopRepo.Get(shopid);
             var Product = await _repoProduct.ProductRepo.Get(productId);
@@ -147,8 +154,9 @@ namespace Zembil.Controllers
             try
             {
                 var size = file.Length;
-                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + "/Uploads/Products", file.FileName);
-                Product.ImageUrl = filePath;
+                var place = _configuration["UploadFolderPath"] + "/products/";
+                var filePath = Path.Combine(@Directory.GetCurrentDirectory() + place, file.FileName);
+                Product.ImageUrl = place + file.FileName.Trim().Replace(" ", "_");
                 if (file.Length > 0)
                 {
                     using (var stream = new FileStream(filePath, FileMode.Create))

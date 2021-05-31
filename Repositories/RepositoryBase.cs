@@ -76,13 +76,14 @@ namespace Zembil.Repositories
                 Pagination = 1;
             }
 
-            var startIndex = (Pagination - 1) * Limit;
-            var count = TotalItems - startIndex;
-            var endIndex = Limit < count ? Limit : count;
+            var skipValue = (Pagination - 1) * Limit;
+            // var count = TotalItems - skipValue;
+            // var endIndex = Limit < count ? Limit : count;
 
-            if (Limit < TotalItems && startIndex < TotalItems)
+            if (Limit < TotalItems && skipValue < TotalItems)
             {
-                models = models.GetRange(startIndex, endIndex);
+                // models = models.GetRange(startIndex, endIndex);
+                models = models.Skip(skipValue).Take(Limit).ToList();
 
             }
             else if (Limit < TotalItems)

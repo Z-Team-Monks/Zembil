@@ -46,7 +46,12 @@ namespace Zembil.Utils
 
         public async Task<User> getUserFromHeader(string authHeader)
         {
+            if (string.IsNullOrEmpty(authHeader))
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "No authentication token provided! User not logged in!", Status = "fail" });
+            }
             int tokenid = _accountServices.Decrypt(authHeader);
+
             var userExists = await _repoWrapper.UserRepo.Get(tokenid);
             if (userExists == null)
             {
@@ -68,7 +73,7 @@ namespace Zembil.Utils
             }
         }
 
-        public async Task<bool> ValidateProduct(IRepositoryWrapper repoWrapper,ProductCreateDto newProduct)
+        public async Task<bool> ValidateProduct(IRepositoryWrapper repoWrapper, ProductCreateDto newProduct)
         {
             var categories = await repoWrapper.CategoryRepo.GetAll();
             if (!categories.Any(c => c.CategoryId == newProduct.CategoryId))

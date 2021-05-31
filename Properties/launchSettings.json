@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:51042/",
+      "applicationUrl": "http://localhost:51043/",
       "sslPort": 44327
     }
   },
@@ -15,7 +15,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:51042/"
+      "applicationUrl": "http://localhost:51043/"
     },
     "Zembil": {
       "commandName": "Project",

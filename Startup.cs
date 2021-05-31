@@ -1,4 +1,3 @@
-using Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +15,8 @@ using System;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Collections.Generic;
 using Zembil.ErrorHandler;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Zembil
 {
@@ -31,7 +32,6 @@ namespace Zembil
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
             services.AddScoped<IRepositoryWrapper, WrapperRepository>();
             services.AddDbContext<DbContexts.ZembilContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), o => o.UseNetTopologySuite()).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             services.AddControllers();
@@ -107,6 +107,15 @@ namespace Zembil
             }
             // custom exception handler registration
             app.ConfigureCustomExceptionMiddleware();
+
+            // serve static files
+            app.UseFileServer(new FileServerOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(@Directory.GetCurrentDirectory(), "Uploads")
+                ),
+                RequestPath = "/Uploads"
+            });
 
             app.UseCors("AllowEverything");
 
