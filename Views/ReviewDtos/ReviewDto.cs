@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zembil.ValidationAttributes;
 
 namespace Zembil.Views
 {
-    public class ReviewToReturnDto
+    [ValidReview]
+    public class ReviewDto
     {
-        public int ReviewId { get; set; }
-        public int UserId { get; set; }
-        public int ProductId { get; set; }
-        public string UserName { get; set; }
         public int Rating { get; set; }
         public string ReviewString { get; set; }
+        
     }
 }

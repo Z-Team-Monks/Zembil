@@ -13,6 +13,7 @@ namespace Zembil.Repositories
         ICategoryRepository CategoryRepo { get; }
         ILocationRepository LocationRepo { get; }
         IAdsRepository AdsRepo { get; }
+        INotificationRepository NotificationRepo { get; }
         Task SaveAsync();
     }
 }

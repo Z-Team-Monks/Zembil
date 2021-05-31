@@ -15,6 +15,7 @@ namespace Zembil.Repositories
         private ICategoryRepository _categoryRepository;
         private ILocationRepository _locationRepository;
         private IAdsRepository _adsRepository;
+        private INotificationRepository _notificationRepository;
 
         public WrapperRepository(ZembilContext context)
         {
@@ -109,6 +110,18 @@ namespace Zembil.Repositories
                     _adsRepository = new AdsRepository(_dbContext);
                 }
                 return _adsRepository;
+            }
+        }
+
+	public INotificationRepository NotificationRepo
+        {
+            get
+            {
+                if (_notificationRepository == null)
+                {
+                    _notificationRepository = new NotificationRepository(_dbContext);
+                }
+                return _notificationRepository;
             }
         }
 
