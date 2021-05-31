@@ -28,7 +28,8 @@ namespace Zembil.Controllers
             _mapper = mapper;
             _repoNotification = repoWrapper;
             _accountService = accountService;
-            _helperMethods = HelperMethods.getInstance(repoWrapper, accountService);
+            _helperMethods = HelperMethods.getInstance(repoWrapper, _accountService);
+
         }
 
         [HttpGet]
@@ -36,10 +37,6 @@ namespace Zembil.Controllers
         {
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
 
-            if (userExists == null)
-            {
-                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "You need to login to access this route!", Status = "fail" });
-            }
             var notifications = await _repoNotification.NotificationRepo.GetUserNotifications(userExists.UserId);
             var notificationDtos = new List<NotificationDto>();
 

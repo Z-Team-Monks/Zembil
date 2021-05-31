@@ -80,7 +80,10 @@ namespace Zembil.Controllers
 
             var wishListFromRepo = await _repoCart.WishListRepo.Get(id);
             if (wishListFromRepo == null) return NotFound();
-            if (user == null || wishListFromRepo.UserId != user.UserId) return Unauthorized();
+            if (user == null || wishListFromRepo.UserId != user.UserId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Not authorized for this user", Status = "Fail" });
+            }
 
             await _repoCart.WishListRepo.Delete(wishListFromRepo.WishListItemId);
             return Ok();

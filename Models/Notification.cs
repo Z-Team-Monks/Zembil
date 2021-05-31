@@ -17,7 +17,7 @@ namespace Zembil.Models
         [MaxLength(500)]
         public string NotificationMessage { get; set; }
 
-        //public string NotificationType { get; set; }
+        public string NotificationType { get; set; }
 
         [Required]
         public bool Seen { get; set; }

@@ -11,6 +11,7 @@ using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Controllers
@@ -23,30 +24,28 @@ namespace Zembil.Controllers
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repoUser;
         private readonly IAccountService _accountService;
+        private readonly HelperMethods _helperMethods;
+
         public UsersController(IRepositoryWrapper repoWrapper, IAccountService accountService, IMapper mapper)
         {
             _mapper = mapper;
             _repoUser = repoWrapper;
             _accountService = accountService;
+            _helperMethods = HelperMethods.getInstance(repoWrapper, accountService);
         }
 
         [Route("users")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserGetDto>>> GetUsers()
         {
-            string authHeader = Request.Headers["Authorization"];
-            if (authHeader != null)
+            var currentUser = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            if (currentUser.Role.ToLower().Equals("admin"))
             {
-                int tokenid = _accountService.Decrypt(authHeader);
-                User currentUser = await _repoUser.UserRepo.Get(tokenid);
-                if (currentUser.Role.ToLower().Equals("admin"))
-                {
-                    var users = await _repoUser.UserRepo.GetAll();
-                    var usersDto = _mapper.Map<IEnumerable<UserGetDto>>(users);
-                    return Ok(usersDto);
-                }
+                var users = await _repoUser.UserRepo.GetAll();
+                var usersDto = _mapper.Map<IEnumerable<UserGetDto>>(users);
+                return Ok(usersDto);
             }
-
+            
             throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Not authorized for this user", Status = "Fail" });
 
         }
@@ -54,21 +53,8 @@ namespace Zembil.Controllers
         [HttpGet("users/{id}")]
         public async Task<ActionResult<UserGetDto>> GetUser(int id)
         {
-            string authHeader = Request.Headers["Authorization"];
-            if (authHeader == null) return Unauthorized();
-            int tokenid = _accountService.Decrypt(authHeader);
-
-            if (id != tokenid)
-            {
-                return NotFound();
-            }
-
-            var user = await _repoUser.UserRepo.Get(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return _mapper.Map<UserGetDto>(user);
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            return _mapper.Map<UserGetDto>(userExists);
         }
 
         [AllowAnonymous]
@@ -126,21 +112,17 @@ namespace Zembil.Controllers
         [HttpPut("users/{id}")]
         public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
         {
-            var userExist = await _repoUser.UserRepo.Get(user.UserId);
-            if (id != user.UserId)
+            var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+            if(userExists.UserId != id)
             {
-                return BadRequest();
-            }
-            if (userExist == null)
-            {
-                return NotFound("No user found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Not authorized for this user", Status = "Fail" });
             }
             else
             {
+                user.UserId = id;
                 await _repoUser.UserRepo.Update(user);
             }
             return NoContent();
         }
-
     }
 }
