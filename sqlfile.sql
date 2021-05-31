@@ -62,13 +62,13 @@
 
 -- Insert into reviews
 
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (1,3,5,'Amazing and modern shoe','2021-05-29T19:53:58.888Z');
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (2,3,4,'A dress that fits my wife','2020-05-29T19:53:58.888Z');
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (3,4,2,'Not bad','2021-02-29T19:53:58.888Z');
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (5,6,0,'I do not like such brands they smell fast','2021-10-29T19:53:58.888Z');
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (4,5,5,'I like those phones but no money no funny. I can not buy it','2021-05-29T19:51:58.888Z');
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (6,5,3,'Pc''s of the time. Nice product','2020-07-29T19:53:58.888Z');
--- INSERT INTO reviews("UserId","ProductId","Rating","ReviewString","ReviewDate") VALUES (3,1,1,'I like it. If I were get married, I would buy it','2021-05-29T19:22:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (1,3,5,'Amazing and modern shoe','2021-05-29T19:53:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (2,3,4,'A dress that fits my wife','2020-05-29T19:53:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (3,4,2,'Not bad','2021-02-29T19:53:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (5,6,0,'I do not like such brands they smell fast','2021-10-29T19:53:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (4,5,5,'I like those phones but no money no funny. I can not buy it','2021-05-29T19:51:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (6,5,3,'Pc''s of the time. Nice product','2020-07-29T19:53:58.888Z');
+-- INSERT INTO reviews("UserId","ProductId","Rating","Comment","ReviewDate") VALUES (3,1,1,'I like it. If I were get married, I would buy it','2021-05-29T19:22:58.888Z');
 
 
 

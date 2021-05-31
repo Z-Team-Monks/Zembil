@@ -25,7 +25,7 @@ namespace Zembil.Models
 
         [Required]
         [MaxLength(500)]
-        public string ReviewString { get; set; }
+        public string Comment { get; set; }
 
         [Required]
         public DateTime ReviewDate { get; set; }

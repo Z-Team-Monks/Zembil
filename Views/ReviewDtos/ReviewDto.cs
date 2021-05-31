@@ -10,7 +10,7 @@ namespace Zembil.Views
     public class ReviewDto
     {
         public int Rating { get; set; }
-        public string ReviewString { get; set; }
-        
+        public string Comment { get; set; }
+
     }
 }

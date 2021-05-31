@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -22,7 +23,6 @@ namespace Zembil.Controllers
         private readonly IRepositoryWrapper _repoNotification;
         private readonly IAccountService _accountService;
         private readonly HelperMethods _helperMethods;
-
         public NotificationController(IRepositoryWrapper repoWrapper, IAccountService accountService, IMapper mapper)
         {
             _mapper = mapper;
@@ -36,8 +36,8 @@ namespace Zembil.Controllers
         public async Task<ActionResult<IEnumerable<NotificationDto>>> GetNotifications()
         {
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
- 
-            var notifications = await _repoNotification.NotificationRepo.GetUserNotifications(userExists.UserId);            
+
+            var notifications = await _repoNotification.NotificationRepo.GetUserNotifications(userExists.UserId);
             var notificationDtos = new List<NotificationDto>();
 
             foreach (Notification notification in notifications)
@@ -45,7 +45,7 @@ namespace Zembil.Controllers
                 notificationDtos.Add(_mapper.Map<NotificationDto>(notification));
             }
 
-            foreach(Notification notification in notifications)
+            foreach (Notification notification in notifications)
             {
                 notification.Seen = true;
                 await _repoNotification.NotificationRepo.Update(notification);

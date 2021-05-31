@@ -89,7 +89,24 @@ namespace Zembil.Controllers
                 }
             }
 
-            throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Not authorized for this user", Status = "Fail" });
+            throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Not authorized for this user", Status = "Fail" });
+        }
+        [HttpGet("admin/status")]
+        public async Task<ActionResult<Object>> GetStatus()
+        {
+            string authHeader = Request.Headers["Authorization"];
+            if (authHeader != null)
+            {
+                int tokenid = _accountService.Decrypt(authHeader);
+                User currentUser = await _repoUser.UserRepo.Get(tokenid);
+
+                if (currentUser.Role.ToLower().Equals("admin"))
+                {
+                    return await _repoUser.UserRepo.GetZembilStatus();
+                }
+            }
+
+            throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Not authorized for this user", Status = "Fail" });
         }
 
         [HttpPut("users/{id}")]
