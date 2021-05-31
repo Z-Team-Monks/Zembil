@@ -12,5 +12,11 @@ namespace Zembil.Repositories
         public AdsRepository(ZembilContext context) : base(context)
         {
         }
+
+        public async Task<List<Ads>> GetAdsWithShops()
+        {
+            var fullAdsList = await _databaseContext.Set<Ads>().Include(x => x.ShopId).ToListAsync();
+            return fullAdsList;
+        }
     }
 }

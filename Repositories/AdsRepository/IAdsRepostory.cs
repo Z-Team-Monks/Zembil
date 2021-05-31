@@ -7,5 +7,7 @@ namespace Zembil.Repositories
 {
     public interface IAdsRepository : IRepositoryBase<Ads>
     {
+        Task<List<Ads>> GetAdsWithShops();
     }
+
 }

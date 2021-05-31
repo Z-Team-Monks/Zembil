@@ -21,7 +21,7 @@ namespace Zembil.Models
 
         [Required]
         [MaxLength(50)]
-        public string PhoneNumber1 { get; set; }
+        public string PhoneNumber { get; set; }
 
         public string CoverImage { get; set; }
 
