@@ -36,9 +36,18 @@ namespace Zembil.Controllers
             // can't give multiple review for same product
             var productExist = await _repoReview.ProductRepo.Get(id);
             var userExists = await getUserFromHeader(Request.Headers["Authorization"]);
-            //var shopExists = await _repoReview.ShopRepo.Get(productExist.ShopId);
+            var shopExists = await _repoReview.ShopRepo.Get(productExist.ShopId);
 
-            if (productExist == null) return NotFound("No product found with that id!");
+            if (productExist == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
+            }
+
+            if(shopExists == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
+            }
+
             if (userExists == null) return NotFound("User doesn't Exist");
 
             if (await _repoReview.ReviewRepo.GetRevieweByUserAndProduct(id, userExists.UserId) != null)
@@ -51,19 +60,15 @@ namespace Zembil.Controllers
             reviewForRepo.ProductId = id;
             reviewForRepo.ReviewDate = DateTime.Now;
 
-            // notification for followers
-            var following = await _repoReview.ShopRepo.GetUsersFollowing(productExist.ShopId);
-            foreach (var follower in following)
+            // notification for shop owner
+            var newNotification = new Notification
             {
-                var newNotification = new Notification
-                {
-                    UserId = userExists.UserId,
-                    NotificationMessage = $"{userExists.Username} reviewed {productExist.ProductName} form your shop.",
-                    Seen = false,
-                };
-                await _repoReview.NotificationRepo.Add(newNotification);
-            }
+                UserId = shopExists.OwnerId,
+                NotificationMessage = $"{userExists.Username} reviewed {productExist.ProductName} from your shop {shopExists.ShopName}.",
+                Seen = false,
+            };
 
+            await _repoReview.NotificationRepo.Add(newNotification);            
             await _repoReview.ReviewRepo.Add(reviewForRepo);
             return Ok(reviewForRepo); // created at here
         }
@@ -94,7 +99,7 @@ namespace Zembil.Controllers
             var reviewExists = await _repoReview.ReviewRepo.GetRevieweById(reviewId);
             if (reviewExists == null)
             {
-                return NotFound("No Review found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "No review found with that id", Status = "Fail" });
             }
             var reviewToReturn = _mapper.Map<ReviewToReturnDto>(reviewExists);
             var userFromRepo = await _repoReview.UserRepo.Get(reviewToReturn.UserId);
@@ -113,12 +118,12 @@ namespace Zembil.Controllers
             var reviewExists = await _repoReview.ReviewRepo.Get(reviewId);
             if (reviewExists == null)
             {
-                return NotFound("No Review found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "No review found with that id", Status = "Fail" });
             }
 
             if (reviewExists.UserId != userExists.UserId)
             {
-                return Unauthorized("Not your review");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this review", Status = "Fail" });
             }
 
 
@@ -141,12 +146,12 @@ namespace Zembil.Controllers
             var reviewExists = await _repoReview.ReviewRepo.Get(reviewId);
             if (reviewExists == null)
             {
-                return NotFound("No Review found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "No review found with that id", Status = "Fail" });
             }
 
             if (reviewExists.UserId != userExists.UserId)
             {
-                return Unauthorized("Not your review");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't delete this review", Status = "Fail" });
             }
             await _repoReview.ReviewRepo.Delete(reviewId);
             return Ok();

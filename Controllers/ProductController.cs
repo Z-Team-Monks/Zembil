@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -44,7 +45,7 @@ namespace Zembil.Controllers
             var product = await _repoProduct.ProductRepo.GetProductWithReviewes(id);
             if (product == null)
             {
-                return NotFound();
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
             }
             var reviewesFromRepo = await _repoProduct.ReviewRepo.GetReviewesOfProduct(id);
             var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
@@ -83,7 +84,10 @@ namespace Zembil.Controllers
         {
 
             var shopExists = await _repoProduct.ShopRepo.Get(product.ShopId);
-            if (shopExists == null) return NotFound("Shop doesn't exist");
+            if (shopExists == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
+            }
 
             var user = await getUserFromHeader(Request.Headers["Authorization"]);
             if (user == null) return Unauthorized();
@@ -94,7 +98,7 @@ namespace Zembil.Controllers
             var isProductValid = await ValidateProduct(product);
             if (!isProductValid)
             {
-                return BadRequest("Invalid Category");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Invalid Category", Status = "Fail" });
             }
 
             // notification for followers
@@ -143,14 +147,20 @@ namespace Zembil.Controllers
 
             if (productExist == null)
             {
-                return NotFound("No product found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
             }
 
             var shopExists = await _repoProduct.ShopRepo.Get(productExist.ShopId);
-            if (shopExists == null) return NotFound("Shop doesn't exist");
+            if (shopExists == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
+            }
 
             var shop = await _repoProduct.ShopRepo.Get(productExist.ShopId);
-            if (shop.OwnerId != user.UserId) return Unauthorized();  //Not your shop
+            if (shop.OwnerId != user.UserId)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this product", Status = "Fail" });//Not your shop
+            }
 
             product.ApplyTo(productExist, ModelState);
             if (!TryValidateModel(productExist))
@@ -169,7 +179,7 @@ namespace Zembil.Controllers
 
             if (productExist == null)
             {
-                return NotFound("No product found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product Doesn't Exist", Status = "Fail" });
             }
 
             _mapper.Map(productUpdateDto, productExist);

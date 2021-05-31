@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -60,7 +61,10 @@ namespace Zembil.Controllers
             try
             {
                 var result = await _repository.ShopRepo.GetShopWithLocation(id);
-                if (result == null) return NotFound();
+                if (result == null)
+                {
+                    throw new CustomAppException(new ErrorDetail() {StatusCode = 404,Message = "Shop Doesn't Exist", Status = "Fail" });
+                }
                 return result;
             }
             catch (Exception)
@@ -85,16 +89,20 @@ namespace Zembil.Controllers
 
             if (userExists == null)
             {
-                return Unauthorized();
-            }
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "You are not authorized for this action!", Status = "fail" });
+            }        
 
             //use this dto inorder not to accept status updates in this route
             ShopChangeDto updatedDto;
             var ShopExist = await _repository.ShopRepo.Get(id);
-
-            if (ShopExist == null || ShopExist.ShopId != userExists.Id)
+            if(ShopExist == null)
             {
-                return NotFound("No Shop found with that id for current user!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
+            }
+
+            if ( ShopExist.ShopId != userExists.Id)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this shop", Status = "Fail" });  //Not your shop
             }
             else
             {
@@ -115,11 +123,11 @@ namespace Zembil.Controllers
 
             if (ShopExist == null)
             {
-                return NotFound("No Shop found with that id!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });  
             }
             if (shop.ShopLocationDto == null)
             {
-                return BadRequest("Associated location is also required!");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Associated location is also required!", Status = "Fail" });
             }
             shop.ShopId = id;
             await _repository.ShopRepo.Update(shop);
@@ -132,13 +140,11 @@ namespace Zembil.Controllers
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
 
-            var userExists = await _repository.UserRepo.Get(tokenid);
-
-            if (userExists == null) return NotFound("User doesn't Exist");
+            var userExists = await _repository.UserRepo.Get(tokenid);          
 
             if (shopCreateDto == null)
             {
-                return BadRequest("shop can't be empty");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Shop field is required!", Status = "Fail" });
             }
             try
             {
@@ -202,7 +208,10 @@ namespace Zembil.Controllers
             var followExists = _repository.ShopRepo.FollowExists(userExists.UserId, shopId);
 
             if (userExists == null) return NotFound("User doesn't Exist");
-            if (followExists) return BadRequest("Shop already liked by this user");
+            if (followExists)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Shop is already liked by the user!", Status = "Fail" });
+            }
 
             ShopFollow shopFollow = new ShopFollow
             {
@@ -223,7 +232,10 @@ namespace Zembil.Controllers
             var userExists = await _repository.UserRepo.Get(tokenid);
             var followExists = _repository.ShopRepo.FollowExists(userExists.UserId, shopId);
 
-            if (!followExists) return BadRequest("Can't retract shop not liked before");
+            if (!followExists)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 400, Message = "Current User doesn't follow this shop!", Status = "Fail" });
+            }
             //if (userExists == null) return NotFound("User doesn't Exist");            
 
             await _repository.ShopRepo.RetractFollow(userExists.UserId, shopId);
@@ -241,11 +253,9 @@ namespace Zembil.Controllers
             }
 
             var shopRepo = await _repository.ShopRepo.Get(shopId);
-            if (shopRepo == null) return NotFound("shop doesn't exist");
-
-            if (shopStatus == null)
+            if (shopRepo == null)
             {
-                return BadRequest("isActive should be included");
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
             shopRepo.IsActive = shopStatus.IsActive;

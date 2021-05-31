@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -51,7 +52,10 @@ namespace Zembil.Controllers
             if (user == null) return Unauthorized();
 
             var cartItem = await _repoCart.WishListRepo.Get(Id);
-            if (cartItem == null) return NotFound("Cart Item doesn't exist");
+            if (cartItem == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Cart Item doesn't exist", Status = "Fail" });
+            }
             return Ok(cartItem);
         }
 

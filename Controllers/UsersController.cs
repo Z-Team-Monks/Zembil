@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Repositories;
 using Zembil.Services;
@@ -39,14 +40,14 @@ namespace Zembil.Controllers
                 int tokenid = _accountService.Decrypt(authHeader);
                 User currentUser = await _repoUser.UserRepo.Get(tokenid);
                 if (currentUser.Role.ToLower().Equals("admin"))
-                {                    
+                {                       
                     var users = await _repoUser.UserRepo.GetAll();
                     var usersDto = _mapper.Map<IEnumerable<UserGetDto>>(users);
                     return Ok(usersDto);
                 }
             }
 
-            return Unauthorized("not authorized for this user");
+            throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Not authorized for this user", Status = "Fail" });
 
         }
 
@@ -102,7 +103,7 @@ namespace Zembil.Controllers
                 }
             }
 
-            return Unauthorized("Current user can't create admin user");
+            throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Not authorized for this user", Status = "Fail" });
         }
 
         [HttpPut("users/{id}")]
