@@ -29,6 +29,12 @@ namespace Zembil.Repositories
             return shop;
 
         }
+        public async Task<List<ShopFollow>> GetUsersFollowing(int shopId)
+        {
+            var following = await _databaseContext.Set<ShopFollow>().Where(s => s.ShopId == shopId).ToListAsync();
+            return following;
+        }
+
         public async Task<List<Product>> GetAllProductsOfShop(int shopId)
         {
             var shopProducts = await _databaseContext.Set<Product>().Where(x => x.ShopId == shopId).ToListAsync();

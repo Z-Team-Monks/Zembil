@@ -1,16 +1,16 @@
 -- Load category
 
--- INSERT INTO category("Category_name") VALUES ('Electronics');
--- INSERT INTO category("Category_name") VALUES ('Mobile Phones');
--- INSERT INTO category("Category_name") VALUES ('Laptops and Tablets');
--- INSERT INTO category("Category_name") VALUES ('Shoes');
--- INSERT INTO category("Category_name") VALUES ('Men Cloth');
--- INSERT INTO category("Category_name") VALUES ('Construction Material');
--- INSERT INTO category("Category_name") VALUES ('Women Cloth');
--- INSERT INTO category("Category_name") VALUES ('Cosmetics');
--- INSERT INTO category("Category_name") VALUES ('Traditional Cloths');
--- INSERT INTO category("Category_name") VALUES ('Furniture');
--- INSERT INTO category("Category_name") VALUES ('Boutique');
+-- INSERT INTO category("CategoryName") VALUES ('Electronics');
+-- INSERT INTO category("CategoryName") VALUES ('Mobile Phones');
+-- INSERT INTO category("CategoryName") VALUES ('Laptops and Tablets');
+-- INSERT INTO category("CategoryName") VALUES ('Shoes');
+-- INSERT INTO category("CategoryName") VALUES ('Men Cloth');
+-- INSERT INTO category("CategoryName") VALUES ('Construction Material');
+-- INSERT INTO category("CategoryName") VALUES ('Women Cloth');
+-- INSERT INTO category("CategoryName") VALUES ('Cosmetics');
+-- INSERT INTO category("CategoryName") VALUES ('Traditional Cloths');
+-- INSERT INTO category("CategoryName") VALUES ('Furniture');
+-- INSERT INTO category("CategoryName") VALUES ('Boutique');
 
 --users
 --oroginal password

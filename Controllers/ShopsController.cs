@@ -127,7 +127,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shop>> CreateShop(Shop shop, [FromForm] IFormFile file = null)
+        public async Task<ActionResult<Shop>> CreateShop(ShopCreateDto shopCreateDto, [FromForm] IFormFile file = null)
         {
             string authHeader = Request.Headers["Authorization"];
             int tokenid = _accountService.Decrypt(authHeader);
@@ -136,7 +136,7 @@ namespace Zembil.Controllers
 
             if (userExists == null) return NotFound("User doesn't Exist");
 
-            if (shop == null)
+            if (shopCreateDto == null)
             {
                 return BadRequest("shop can't be empty");
             }
@@ -153,17 +153,18 @@ namespace Zembil.Controllers
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
-                            shop.CoverImage = filePath;
+                            shopCreateDto.CoverImage = filePath;
                         }
                     }
                 }
 
+                var shop = _mapper.Map<Shop>(shopCreateDto);
                 shop.OwnerId = tokenid;
                 shop.IsActive = null;
 
                 var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
                 var loc = geometryFactory.CreatePoint(new Coordinate(shop.ShopLocationDto.Latitude, shop.ShopLocationDto.Longitude));
-                var newLoc = new ShopLocation() { GeoLoacation = loc, LocationName = shop.ShopLocationDto.LocationName };
+                var newLoc = new ShopLocation() { GeoLoacation = loc, LocationName = shopCreateDto.ShopLocationDto.LocationName };
 
                 var newLocation = await _repository.LocationRepo.Add(newLoc);
                 shop.ShopLocationId = newLocation.LocationId;

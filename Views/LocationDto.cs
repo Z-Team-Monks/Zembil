@@ -11,4 +11,11 @@ namespace Zembil.Views
         public double Longitude { get; set; }
         public double Latitude { get; set; }
     }
+
+    public class NewLocationDto
+    {
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+        public string LocationName { get; set; }
+    }
 }

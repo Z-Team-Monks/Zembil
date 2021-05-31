@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Zembil.ErrorHandler;
 using Zembil.Services;
 using Zembil.Views;
 
@@ -21,7 +22,9 @@ namespace Zembil.Controllers
             var token = await _accountService.Authenticate(userCred.Username, userCred.Password);
 
             if (token == null)
-                return NotFound();
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 401, Message = "Wrong user credentials!", Status = "fail" });
+
+
 
             var authDto = new AuthDto
             {
@@ -29,39 +32,6 @@ namespace Zembil.Controllers
             };
             return Ok(authDto);
         }
-
-        // [HttpPost]
-        // public ActionResult Upload([FromForm] File)
-        // {
-        //     using (DBModel db = new DBModel())
-        //     {
-        //         if (!jsonFile.FileName.EndsWith(".json"))
-        //         {
-        //             ViewBag.Error = "Invalid file type(Only JSON file allowed)";
-        //         }
-        //         else
-        //         {
-        //             jsonFile.SaveAs(Server.MapPath("~/FileUpload/" + Path.GetFileName(jsonFile.FileName)));
-        //             StreamReader streamReader = new StreamReader(Server.MapPath("~/FileUpload/" + Path.GetFileName(jsonFile.FileName)));
-        //             string data = streamReader.ReadToEnd();
-        //             List<Product> products = JsonConvert.DeserializeObject<List<Product>>(data);
-
-        //             products.ForEach(p =>
-        //             {
-        //                 Product product = new Product()
-        //                 {
-        //                     Name = p.Name,
-        //                     Price = p.Price,
-        //                     Quantity = p.Quantity
-        //                 };
-        //                 db.Products.Add(product);
-        //                 db.SaveChanges();
-        //             });
-        //             ViewBag.Success = "File uploaded Successfully..";
-        //         }
-        //     }
-        //     return View("Index");
-        // }
 
     }
 }

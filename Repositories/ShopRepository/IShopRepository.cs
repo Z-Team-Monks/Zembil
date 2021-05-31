@@ -16,5 +16,6 @@ namespace Zembil.Repositories
         Task<Shop> GetShopWithLocation(int shopId);
         Task<List<Product>> GetAllProductsOfShop(int shopId);
         Task<List<Shop>> GetShopsByOwner(int ownerId);
+        Task<List<ShopFollow>> GetUsersFollowing(int shopId);
     }
 }

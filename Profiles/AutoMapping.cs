@@ -12,6 +12,9 @@ namespace Zembil.Profiles
     {
         public AutoMapping()
         {
+            CreateMap<User, UserCreateDto>();
+            CreateMap<UserCreateDto, User>();
+
             CreateMap<Product, ProductCreateDto>();
             CreateMap<ProductCreateDto, Product>();
             CreateMap<ReviewDto, Review>()
@@ -30,6 +33,15 @@ namespace Zembil.Profiles
             CreateMap<ShopChangeDto, Shop>();
             CreateMap<Shop, ShopChangeDto>();
 
+            CreateMap<ShopCreateDto, Shop>();
+            CreateMap<Shop, ShopCreateDto>();
+
+            CreateMap<ShopBatchGetDto, Shop>();
+            CreateMap<Shop, ShopBatchGetDto>()
+                .ForMember(
+                    dest => dest.Status,
+                    opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+
             CreateMap<ShopReturnDto, Shop>();
             CreateMap<List<Shop>, List<ShopReturnDto>>();
 
@@ -39,6 +51,36 @@ namespace Zembil.Profiles
                 .ForMember(
                     dest => dest.Status,
                     opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+
+            CreateMap<AdsCreateDto, Ads>();
+            CreateMap<Ads, AdsCreateDto>();
+
+            CreateMap<NewLocationDto, LocationDto>();
+            CreateMap<LocationDto, NewLocationDto>();
+
+            CreateMap<Product, ProductGetBatchDto>();
+            CreateMap<ProductGetBatchDto, Product>();
+
+            CreateMap<Product, ProductUpdateDto>();
+            CreateMap<ProductUpdateDto, Product>();
+
+            CreateMap<ProductDto, Product>();
+            CreateMap<Product, ProductDto>();
+
+            CreateMap<CategoryDto, Category>();
+            CreateMap<Category, CategoryDto>();
+
+            CreateMap<NewLocationDto, ShopLocation>();
+            CreateMap<ShopLocation, NewLocationDto>();
+
+            CreateMap<WishListAddDto, WishListItem>();
+            CreateMap<WishListItem, WishListAddDto>();
+
+            CreateMap<WishListDto, WishListItem>();
+            CreateMap<WishListItem, WishListDto>();
+
+            CreateMap<Notification, NotificationDto>();
+            CreateMap<NotificationDto, Notification>();
         }
 
         public string getStatusForShop(bool? isActive)

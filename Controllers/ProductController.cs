@@ -39,30 +39,42 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             var product = await _repoProduct.ProductRepo.GetProductWithReviewes(id);
             if (product == null)
             {
                 return NotFound();
             }
-            return product;
+            var reviewesFromRepo = await _repoProduct.ReviewRepo.GetReviewesOfProduct(id);
+            var reviewesToReturn = _mapper.Map<IEnumerable<ReviewToReturnDto>>(reviewesFromRepo);
+
+            foreach (var review in reviewesToReturn)
+            {
+                var userFromRepo = await _repoProduct.UserRepo.Get(review.UserId);
+                review.UserName = userFromRepo.Username;
+            }
+
+            var productDto = _mapper.Map<ProductDto>(product);
+            productDto.ProductReviews = reviewesToReturn;
+            return productDto;
         }
 
         [AllowAnonymous]
         [HttpGet]
         [HttpHead]
-        public async Task<IEnumerable<Product>> GetProducts([FromQuery] QueryFilterParams queryParams)
+        public async Task<IEnumerable<ProductGetBatchDto>> GetProducts([FromQuery] QueryFilterParams queryParams)
         {
             List<Product> products;
-            Console.WriteLine($"run");
             if (queryParams == null)
             {
                 products = await _repoProduct.ProductRepo.GetAll();
-                return products;
             }
-            products = await _repoProduct.ProductRepo.FilterProducts(queryParams);
-            return products;
+            else
+            {
+                products = await _repoProduct.ProductRepo.FilterProducts(queryParams);
+            }
+            return _mapper.Map<IEnumerable<ProductGetBatchDto>>(products);
         }
 
 
@@ -84,6 +96,20 @@ namespace Zembil.Controllers
             {
                 return BadRequest("Invalid Category");
             }
+
+            // notification for followers
+            var following = await _repoProduct.ShopRepo.GetUsersFollowing(product.ShopId);
+            foreach (var follower in following)
+            {
+                var newNotification = new Notification
+                {
+                    UserId = user.UserId,
+                    NotificationMessage = $"{shopExists.ShopName} added new product {product.ProductName}",
+                    Seen = false,
+                };
+                await _repoProduct.NotificationRepo.Add(newNotification);
+            }
+
 
             // upload image if exists
             if (file != null)
@@ -136,7 +162,7 @@ namespace Zembil.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Product>> UpdateFullProduct(int id, [FromBody] Product product)
+        public async Task<ActionResult<ProductDto>> UpdateFullProduct(int id, [FromBody] ProductUpdateDto productUpdateDto)
         {
 
             var productExist = await _repoProduct.ProductRepo.Get(id);
@@ -145,13 +171,15 @@ namespace Zembil.Controllers
             {
                 return NotFound("No product found with that id!");
             }
-            product.ProductId = id;
-            await _repoProduct.ProductRepo.Update(product);
-            return Ok(product);
+
+            _mapper.Map(productUpdateDto, productExist);
+            await _repoProduct.ProductRepo.Update(productExist);
+            return _mapper.Map<ProductDto>(productExist);
         }
 
+        [AllowAnonymous]
         [HttpGet("trending")]
-        public async Task<IEnumerable<Product>> TrendingProducts([FromQuery] TrendingQuery queryParams)
+        public async Task<IEnumerable<ProductGetBatchDto>> TrendingProducts([FromQuery] TrendingQuery queryParams)
         {
             if (queryParams == null)
             {
@@ -159,7 +187,7 @@ namespace Zembil.Controllers
                 queryParams.Latest = 1;
             }
             var trendingProducts = await _repoProduct.ProductRepo.GetTrendingProducts(queryParams);
-            return trendingProducts;
+            return _mapper.Map<IEnumerable<ProductGetBatchDto>>(trendingProducts);
         }
 
         //will be moved later
