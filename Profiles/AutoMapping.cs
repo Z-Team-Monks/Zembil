@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zembil.Models;
+using Zembil.Utils;
 using Zembil.Views;
 
 namespace Zembil.Profiles
@@ -40,7 +41,7 @@ namespace Zembil.Profiles
             CreateMap<Shop, ShopBatchGetDto>()
                 .ForMember(
                     dest => dest.Status,
-                    opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+                    opt => opt.MapFrom(src => HelperMethods.getInstanceEmpty().getStatusForShop(src.IsActive)));
 
             CreateMap<ShopReturnDto, Shop>();
             CreateMap<List<Shop>, List<ShopReturnDto>>();
@@ -50,7 +51,7 @@ namespace Zembil.Profiles
             CreateMap<Shop, ShopDto>()
                 .ForMember(
                     dest => dest.Status,
-                    opt => opt.MapFrom(src => getStatusForShop(src.IsActive)));
+                    opt => opt.MapFrom(src => HelperMethods.getInstanceEmpty().getStatusForShop(src.IsActive)));
 
             CreateMap<AdsCreateDto, Ads>();
             CreateMap<Ads, AdsCreateDto>();
@@ -81,19 +82,6 @@ namespace Zembil.Profiles
 
             CreateMap<Notification, NotificationDto>();
             CreateMap<NotificationDto, Notification>();
-        }
-
-        public string getStatusForShop(bool? isActive)
-        {
-            switch (isActive)
-            {
-                case null:
-                    return "Pending";
-                case true:
-                    return "Approved";
-                case false:
-                    return "Declined";
-            }
         }
     }
 }

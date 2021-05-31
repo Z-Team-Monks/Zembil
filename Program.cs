@@ -16,7 +16,8 @@ namespace Zembil
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel().UseUrls("http://localhost:5522", "http://10.6.196.207:5522").UseIISIntegration().UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>();
+                    // webBuilder.UseKestrel().UseUrls("http://localhost:5566", "http://10.6.196.207:5599").UseIISIntegration().UseStartup<Startup>();
                 });
     }
 }
