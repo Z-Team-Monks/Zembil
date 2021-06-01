@@ -33,8 +33,8 @@ namespace Zembil.Models
         public int CategoryId { get; set; }
         public Category ShopCategory { get; set; }
 
-        [Required(ErrorMessage = "Shop need to have location")]
-        [ForeignKey("LocationId")]
+        // [Required(ErrorMessage = "Shop need to have location")]
+        // [ForeignKey("LocationId")]
         public int ShopLocationId { get; set; }
         [NotMapped]
         public LocationDto ShopLocation { get; set; }

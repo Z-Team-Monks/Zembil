@@ -122,12 +122,27 @@ namespace Zembil.Repositories
             {
                 var locationMaker = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
                 var loc = locationMaker.CreatePoint(new Coordinate(shopLocation.Latitude, shopLocation.Longitude));
+
+                var nearLocat = await _databaseContext.Set<ShopLocation>()
+                                                       .Select(t => new { Location = t, Distance = t.GeoLoacation.Distance(loc) })
+                                                       .Where(x => x.Distance <= shopLocation.Radius)
+                                                       .OrderBy(x => x.Distance).Take(9).ToListAsync();
+
                 var nearLocations = await _databaseContext.Set<ShopLocation>()
                                         .Select(t => new { Location = t, Distance = t.GeoLoacation.Distance(loc) })
-                                        .Where(x => x.Distance < shopLocation.Radius)
+                                        .Where(x => x.Distance <= shopLocation.Radius)
                                         .OrderBy(x => x.Distance).Take(9).Select(x => x.Location).ToListAsync();
 
+                foreach (var item in nearLocat)
+                {
+                    Console.WriteLine("distances:{0} => {1}", item.Location.LocationName, item.Distance);
+                }
+
                 Shops = nearLocations.Select(x => Shops.Find(y => y.ShopLocationId == x.LocationId)).ToList();
+                foreach (var item in Shops)
+                {
+                    Console.WriteLine("distances: {0}", item.ShopName);
+                }
             }
 
             return Shops;

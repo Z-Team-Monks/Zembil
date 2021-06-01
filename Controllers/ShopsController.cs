@@ -155,19 +155,19 @@ namespace Zembil.Controllers
                 var shop = _mapper.Map<Shop>(shopCreateDto);
                 shop.OwnerId = userExists.UserId;
                 shop.IsActive = null;
-
                 var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-                var loc = geometryFactory.CreatePoint(new Coordinate(shop.ShopLocation.Latitude, shop.ShopLocation.Longitude));
+                var loc = geometryFactory.CreatePoint(new Coordinate(shopCreateDto.ShopLocationDto.Latitude, shopCreateDto.ShopLocationDto.Longitude));
                 var newLoc = new ShopLocation() { GeoLoacation = loc, LocationName = shopCreateDto.ShopLocationDto.LocationName };
-
                 var newLocation = await _repository.LocationRepo.Add(newLoc);
+
                 shop.ShopLocationId = newLocation.LocationId;
                 var newShop = await _repository.ShopRepo.Add(shop);
 
                 return CreatedAtAction(nameof(GetShop), new { Id = newShop.ShopId }, newShop);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
