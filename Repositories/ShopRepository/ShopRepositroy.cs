@@ -25,7 +25,7 @@ namespace Zembil.Repositories
             var location = await _databaseContext.Set<ShopLocation>().FirstAsync(x => x.LocationId == shop.ShopLocationId);
             var locationDto = new LocationDto() { LocationId = location.LocationId, LocationName = location.LocationName, Longitude = location.GeoLoacation.Coordinate.Y, Latitude = location.GeoLoacation.Coordinate.X };
             shop.ShopLocation = locationDto;
-            Console.WriteLine(locationDto.Latitude);
+            //Console.WriteLine(locationDto.Latitude);
             return shop;
 
         }
@@ -34,6 +34,12 @@ namespace Zembil.Repositories
             var following = await _databaseContext.Set<ShopFollow>().Where(s => s.ShopId == shopId).ToListAsync();
             return following;
         }
+        public async Task<bool> IsuserFollwing(int userId,int shopId)
+        {
+            var isFollwing = await _databaseContext.Set<ShopFollow>().Where(s => s.ShopId == shopId && s.UserId == userId).SingleOrDefaultAsync();
+            return isFollwing != null;
+        }
+
 
         public async Task<List<Product>> GetAllProductsOfShop(int shopId)
         {
@@ -146,6 +152,6 @@ namespace Zembil.Repositories
             }
 
             return Shops;
-        }
+        }        
     }
 }

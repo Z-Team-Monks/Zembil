@@ -17,5 +17,6 @@ namespace Zembil.Views
         public int ShopLocationId { get; set; }        
         public string Description { get; set; }
         public string Status { get; set; }
+        public bool IsFollowing { get; set; }
     }
 }

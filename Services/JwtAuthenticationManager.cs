@@ -39,13 +39,13 @@ namespace Zembil.Services
         }
 
         public string Decrypt(string authHeader)
-        {
-            var handler = new JwtSecurityTokenHandler();            
+        {            
+            var handler = new JwtSecurityTokenHandler();
             authHeader = authHeader.Replace("Bearer ", "");
             var jsonToken = handler.ReadToken(authHeader);
             var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
             var id = tokenS.Claims.First(claim => claim.Type == "unique_name").Value;
-            return id;
+            return id;          
         }        
     }
 }

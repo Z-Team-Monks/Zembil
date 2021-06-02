@@ -44,12 +44,26 @@ namespace Zembil.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<Shop>> GetShops([FromQuery] QueryFilterParams queryParams)
+        public async Task<IEnumerable<ShopBatchGetDto>> GetShopsNoAuth([FromQuery] QueryFilterParams queryParams)
         {
+            int userId = -1;
+            var authHeader = Request.Headers["Authorization"];
+
+            if (!string.IsNullOrEmpty(authHeader))
+            {
+                var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
+                userId = userExists.UserId;
+            }
             var results = await _repository.ShopRepo.FilterProducts(queryParams);
-            var shops = _mapper.Map<List<Shop>>(results);
-            return shops;
+            var shops = _mapper.Map<List<ShopBatchGetDto>>(results);
+
+            foreach (var shop in shops)
+            {
+                shop.IsFollowing = await _repository.ShopRepo.IsuserFollwing(userId, shop.ShopId);
+            }
+            return shops;            
         }
+       
 
         [AllowAnonymous]
         [Route("{id:int}/products")]
