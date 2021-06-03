@@ -16,7 +16,7 @@ namespace Zembil.Repositories
 
         public async Task<IEnumerable<WishListItem>> GetCart(int userid)
         {
-            var cart = await _databaseContext.WishList.Where(w => w.UserId == userid).ToListAsync();
+            var cart = await _databaseContext.WishLists.Where(w => w.UserId == userid).ToListAsync();
             return cart;
         }
     }

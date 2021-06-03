@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using Zembil.DbContexts;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Utils;
 using Zembil.Views;
@@ -21,11 +22,18 @@ namespace Zembil.Repositories
         }
         public async Task<Shop> GetShopWithLocation(int shopId)
         {
-            var shop = await _databaseContext.Set<Shop>().FirstAsync(x => x.ShopId == shopId);
-            var location = await _databaseContext.Set<ShopLocation>().FirstAsync(x => x.LocationId == shop.ShopLocationId);
-            var locationDto = new LocationDto() { LocationId = location.LocationId, LocationName = location.LocationName, Longitude = location.GeoLoacation.Coordinate.Y, Latitude = location.GeoLoacation.Coordinate.X };
-            shop.ShopLocation = locationDto;
-            Console.WriteLine(locationDto.Latitude);
+            var shop = await _databaseContext.Set<Shop>().Where(x => x.ShopId == shopId).FirstOrDefaultAsync();
+            if (shop != null)
+            {
+                var location = await _databaseContext.Set<ShopLocation>().Where(x => x.LocationId == shop.ShopLocationId).FirstOrDefaultAsync();
+                if (location != null)
+                {
+                    var locationDto = new LocationDto() { LocationId = location.LocationId, LocationName = location.LocationName, Longitude = location.GeoLoacation.Coordinate.Y, Latitude = location.GeoLoacation.Coordinate.X };
+                    shop.ShopLocation = locationDto;
+                    Console.WriteLine(locationDto.Latitude);
+                }
+            }
+
             return shop;
 
         }

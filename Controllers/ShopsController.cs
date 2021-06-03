@@ -65,19 +65,12 @@ namespace Zembil.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Shop>> GetShop(int id)
         {
-            try
+            var result = await _repository.ShopRepo.GetShopWithLocation(id);
+            if (result == null)
             {
-                var result = await _repository.ShopRepo.GetShopWithLocation(id);
-                if (result == null)
-                {
-                    throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
-                }
-                return result;
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
-            catch (Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
-            }
+            return result;
         }
 
         [AllowAnonymous]
@@ -102,7 +95,7 @@ namespace Zembil.Controllers
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Shop Doesn't Exist", Status = "Fail" });
             }
 
-            if (ShopExist.ShopId != userExists.UserId)
+            if (ShopExist.OwnerId != userExists.UserId)
             {
                 throw new CustomAppException(new ErrorDetail() { StatusCode = 403, Message = "Current user can't modify this shop", Status = "Fail" });  //Not your shop
             }

@@ -1,0 +1,813 @@
+[
+    {
+        "shopId": "1",
+        "productName": "Vans Men's Suede Sk-8 Hi Shoe",
+        "description": "This shoe is so rad that it was brought back to life from the past so that you can wear it yourself. Consider that a sign.\n\n* Canvas\n* Rubber sole\n* Featuring sturdy canvas and suede uppers\n* Signature waffle rubber outsoles\n* Padded collar and heel counters for all-day comfort, support * and flexibility\n* Legendary lace-up high top",
+        "brand": "Vans",
+        "price": 24.99,
+        "requiresShipping": true,
+        "deliveryAvailable": true,
+        "dateInserted": "2016-08-23T05:53:16.134Z"
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "inventoryQuantity": 20
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "inventoryQuantity": 20
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "inventoryQuantity": 20
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg",
+            "MFQmGGPti9XBLNtiK"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000"
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg",
+            "MFQmGGPti9XBLNtiK"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000"
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg",
+            "MFQmGGPti9XBLNtiK"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000"
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Black",
+        "weight": 3,
+        "inventoryQuantity": 0
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "weight": 3,
+        "productName": "Red",
+        "inventoryQuantity": 0
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg",
+            "2shvxg8QooaNFF9ZP"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "inventoryQuantity": 20,
+        "productName": "Size 9"
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg",
+            "2shvxg8QooaNFF9ZP"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "inventoryQuantity": 100,
+        "productName": "Size 10"
+    },
+    {
+        "ancestors": [
+            "tftRbzc6Pic7NyCkg",
+            "2shvxg8QooaNFF9ZP"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "inventoryQuantity": 100,
+        "productName": "Size 11",
+        "deliveryAvailable": true
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "inventoryQuantity": 100,
+        "productName": "Size 9",
+        "deliveryAvailable": true
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "inventoryQuantity": 100,
+        "productName": "Size 10",
+        "deliveryAvailable": true
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "inventoryQuantity": 100,
+        "productName": "Size 11",
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "DC Men's Pure SE Skate Shoe",
+        "description": "Stand out, make waves and lay down your best tricks in this two-tone leather technical design from DC. Featuring a lace-up front for full adjustability, the low-profile Pure Se is equipped with a sturdy upper, generous cushioning at the collar and tongue, and plenty of padding at the insole for those extra-hard landings. The thick rubber midsole lends added shock absorbency, while the grip rubber bottom will keep you glued to your board.",
+        "brand": "DC",
+        "price": 60.76,
+        "requiresShipping": true,
+        "deliveryAvailable": true,
+        "workflow": {
+            "status": "new"
+        },
+        "dateInserted": "2016-08-23T06:42:00.238Z"
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Black",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "weight": 3,
+        "productName": "Red",
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi",
+            "QvtZpk4mXBugKrZPb"
+        ],
+        "price": 60.76,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi",
+            "QvtZpk4mXBugKrZPb"
+        ],
+        "price": 60.76,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi",
+            "QvtZpk4mXBugKrZPb"
+        ],
+        "price": 60.76,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi",
+            "5yJvQgc2Q2efGce79"
+        ],
+        "price": 60.76,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi",
+            "5yJvQgc2Q2efGce79"
+        ],
+        "price": 60.76,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "LXECo6pZectbeHYEi",
+            "5yJvQgc2Q2efGce79"
+        ],
+        "price": 60.76,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "Lucky Chouette X Vans",
+        "description": "Funky Style and Chic Look \nRenowned for its sister brand, Jardin de Chouette\n\nCreated in 2009, Lucky Chouette quickly won a large Korean celebrity fan base for its funky styles with street cool graphics and humorous art works. \nChouette means owl in French and indicates good luck. \nThus, various owl character prints play a huge part in the design, like Techno Chouette, Yo Chouette, Apple Chouette, etc. \n\nLucky Chouette suggests distinctive style blended with diverse culture for active and smart young women who defy any hint of boredom.\n\n\nNew contemporary character brand \nChunky and casual silhouettes; short and flared skirts, oversized blouses",
+        "price": 89,
+        "requiresShipping": true,
+        "deliveryAvailable": true,
+        "workflow": {
+            "status": "new"
+        },
+        "dateInserted": "2016-08-23T06:34:29.596Z",
+        "brand": "Vans"
+    },
+    {
+        "ancestors": [
+            "hPYwaFDX4dp9vocNY"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Yellow",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "hPYwaFDX4dp9vocNY",
+            "PrtwGHct9jh8D3cyF"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "hPYwaFDX4dp9vocNY",
+            "PrtwGHct9jh8D3cyF"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "hPYwaFDX4dp9vocNY",
+            "PrtwGHct9jh8D3cyF"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "Vans Authentic Black Canvas Womens Trainers",
+        "description": "The Vans Authentic is a time tested classic. This retro plimsoll is part of the Off The Wall range and is durable, responsive, and stylish with a lace up front and subtle branding on the outside. Finished off with the vulcanised Waffle sole",
+        "brand": "Vans",
+        "price": 89,
+        "requiresShipping": true,
+        "Available": true,
+        "dateInserted": "2016-08-23T06:34:41.306Z"
+    },
+    {
+        "ancestors": [
+            "MGStoBoTZHNcSJrtf"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Black",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "MGStoBoTZHNcSJrtf",
+            "mnAE7TDPKBdQvbTSK"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "MGStoBoTZHNcSJrtf",
+            "mnAE7TDPKBdQvbTSK"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "MGStoBoTZHNcSJrtf",
+            "mnAE7TDPKBdQvbTSK"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "Vans Kids Atwood (Canvas) Skate Shoe",
+        "description": "The Vans Authentic is a time tested classic. This retro plimsoll is part of the Off The Wall range and is durable, responsive, and stylish with a lace up front and subtle branding on the outside. Finished off with the vulcanised Waffle sole",
+        "brand": "Vans",
+        "price": 89,
+        "requiresShipping": true,
+        "deliveryAvailable": true,
+        "dateInserted": "2016-08-23T06:38:01.090Z"
+    },
+    {
+        "ancestors": [
+            "xe3uaXSNzNZdQbyTP"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Red",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "xe3uaXSNzNZdQbyTP",
+            "pzt4cQYt2LgGJZDaC"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "xe3uaXSNzNZdQbyTP",
+            "pzt4cQYt2LgGJZDaC"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "xe3uaXSNzNZdQbyTP",
+            "pzt4cQYt2LgGJZDaC"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "DC Trase TX Skate Shoe (Little Kid/Big Kid)",
+        "description": "The trase continues to make a statement with bold new graphic prints, colors and lux materials. The original, since now.\n\nDC recognizes the fusion between art and skateboarding, taking footwear to the next level. Delivering uncompromising comfort, durability, and eye-catching fashion, DC is the source for everyday and technical skateboarding footwear.",
+        "brand": "DC",
+        "price": 89,
+        "requiresShipping": true,
+        "Available": true,
+        "dateInserted": "2016-08-23T06:42:11.331Z"
+    },
+    {
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Black/Turquoise",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "SDtdoRMfhWv5yTrLH",
+            "GvZ7TX5ah4CJ2e55m"
+        ],
+        "price": 89,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "Girls' Rio Casual Sneaker",
+        "description": "Add some old-school cool to her look with this laid-back Airwalk sneaker. It features a quality canvas upper with laces for a good fit, a cushiony insole for comfort and a flexible, non-marking, built-up outsole. Fabric and rubber.",
+        "brand": "Airwalk",
+        "price": 14.99,
+        "requiresShipping": true,
+        "Available": true,
+        "workflow": {
+            "status": "new"
+        },
+        "dateInserted": "2016-08-23T06:46:51.907Z"
+    },
+    {
+        "ancestors": [
+            "9Pa6qdfXa7y5pQBoY"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Pink/Black",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "9Pa6qdfXa7y5pQBoY",
+            "72Qomfd9SSzs3eRyE"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "9Pa6qdfXa7y5pQBoY",
+            "72Qomfd9SSzs3eRyE"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "9Pa6qdfXa7y5pQBoY",
+            "72Qomfd9SSzs3eRyE"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "shopId": "1",
+        "productName": "Liv and Maddie Girls' Retro Liv and Maddie Oxford",
+        "description": "She'll be able to get her sparkle on with this fun take on the retro oxford from Liv and Maddie! It features a fabric upper, rubber cap toe laces, canvas lining, padded insole, and a built-up outsole. Manmade materials.",
+        "brand": "Liv and Maddie",
+        "price": 14.99,
+        "requiresShipping": true,
+        "deliveryAvailable": true,
+        "dateInserted": "2016-08-23T06:52:51.877Z"
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "productName": "Iridescent Pewter",
+        "weight": 3,
+        "inventoryQuantity": 0,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK",
+            "W2dPNFoM57hGFvxLm"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 9",
+        "productName": "Size 9",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK",
+            "W2dPNFoM57hGFvxLm"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 10",
+        "productName": "Size 10",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK",
+            "W2dPNFoM57hGFvxLm"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "optionTitle": "Size 11",
+        "productName": "Size 11",
+        "inventoryQuantity": 100,
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK"
+        ],
+        "price": 24.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "weight": 3,
+        "productName": "Teal Shimmer",
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK",
+            "fkXgNBsWeK6fM3Gjc"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK",
+            "fkXgNBsWeK6fM3Gjc"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "deliveryAvailable": true
+    },
+    {
+        "ancestors": [
+            "x6EY6r4jGJga8dAKK",
+            "fkXgNBsWeK6fM3Gjc"
+        ],
+        "price": 14.99,
+        "inventoryManagement": true,
+        "inventoryPolicy": true,
+        "shopId": "1",
+        "taxable": true,
+        "taxCode": "00000",
+        "deliveryAvailable": true
+    }
+]

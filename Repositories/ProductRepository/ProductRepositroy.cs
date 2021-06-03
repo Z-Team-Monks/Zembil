@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Zembil.DbContexts;
+using Zembil.ErrorHandler;
 using Zembil.Models;
 using Zembil.Utils;
 
@@ -19,6 +20,10 @@ namespace Zembil.Repositories
         public async Task<Product> GetProductWithReviewes(int productId)
         {
             var fullProductList = await _databaseContext.Set<Product>().Include(x => x.ProductReviews).ToListAsync();
+            if (fullProductList == null)
+            {
+                throw new CustomAppException(new ErrorDetail() { StatusCode = 404, Message = "Product with this Id doesn't Exist", Status = "Fail" });
+            }
             var products = fullProductList.FirstOrDefault(r => r.ProductId == productId);
             Console.WriteLine($"Products: {fullProductList[0].ProductReviews}");
             return products;
