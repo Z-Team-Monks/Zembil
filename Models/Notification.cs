@@ -11,7 +11,8 @@ namespace Zembil.Models
     public class Notification
     {
         [Key]
-        public int NotificatoinId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int NotificationId { get; set; }
 
         [Required]
         public int UserId { get; set; }

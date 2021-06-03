@@ -108,7 +108,7 @@ namespace Zembil.Controllers
             {
                 var newNotification = new Notification
                 {
-                    UserId = user.UserId,
+                    UserId = follower.UserId,
                     NotificationMessage = $"{shopExists.ShopName} added new product {product.ProductName}",
                     NotificationType = "New Product",
                     Seen = false,

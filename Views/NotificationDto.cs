@@ -7,8 +7,8 @@ namespace Zembil.Views
 {
     public class NotificationDto
     {
-        public int NotificatoinId { get; set; }                       
-        public string NotificationMessage { get; set; }        
+        public int NotificationId { get; set; }
+        public string NotificationMessage { get; set; }
         public bool Seen { get; set; }
     }
 }

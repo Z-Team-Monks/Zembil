@@ -59,11 +59,11 @@ namespace Zembil.Controllers
             var userExists = await _helperMethods.getUserFromHeader(Request.Headers["Authorization"]);
             var notifications = await _repoNotification.NotificationRepo.GetUserNotifications(userExists.UserId);
 
-            foreach(var notification in notifications)
+            foreach (var notification in notifications)
             {
-                await _repoNotification.NotificationRepo.Delete(notification.NotificatoinId);
+                await _repoNotification.NotificationRepo.Delete(notification.NotificationId);
             }
-            return Ok();            
+            return Ok();
         }
     }
 }
