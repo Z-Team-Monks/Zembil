@@ -76,6 +76,7 @@ namespace Zembil.Controllers
             user.Password = _accountService.HashPassword(user.Password);
             user.Role = "user";
             user.DateAccountCreated = DateTime.Now;
+            //user.Username = user.Username.ToLower();
             await _repoUser.UserRepo.Add(user);
             var userDTO = _mapper.Map<UserGetDto>(user);
             return CreatedAtAction(nameof(CreateUser), new { Id = userDTO.UserId }, userDTO);
